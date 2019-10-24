@@ -4,12 +4,17 @@ import torch.nn as nn
 import torch.nn.init as init
 import torch.nn.functional as F
 from torch.nn import Parameter
+from torch import utils
 import matplotlib.pyplot as plt
 import argparse
+import misc
 
 
 class MLP(nn.Module):
+
 	def __init__(self, num_features, num_hidden, num_outputs):
+		super(MLP, self).__init__()
+
 		self.W_1 = Parameter(init.xavier_normal_(torch.Tensor(num_hidden, num_features)))
 		self.b_1 = Parameter(init.constant_(torch.Tensor(num_hidden), 0))
 
@@ -23,26 +28,32 @@ class MLP(nn.Module):
 		return x
 
 
-def fit(net, data):
+def fit(net, data, optimizer):
+	batch_size = 64
+	num_epochs = 100
 
-	x_train, y_train, x_val, y_val = data
+	x_train, y_train, x_val, y_val, _, _ = data
 
+	train_generator = utils.data.DataLoader(misc.Dataset(x_train, y_train), batch_size=batch_size)
+	val_generator = utils.data.DataLoader(misc.Dataset(x_val, y_val), batch_size=batch_size)
 
+	for epoch in range(num_epochs+1):
 
-def plot_mnist(X):
-	idx, dim, classes = 0, 28, 10
-	canvas = np.zeros((dim*classes, classes*dim))
+		epoch_loss = 0
 
-	for i in range(classes):
-		for j in range(classes):
-			canvas[i*dim:(i+1)*dim, j*dim:(j+1)*dim] = X[idx].reshape((dim, dim))
-			idx += 1
+		for x, y in train_generator:
 
-	plt.figure(figsize=(4, 4))
-	plt.axis('off')
-	plt.imshow(canvas, cmap='gray')
-	plt.title('MNIST handwritten digits')
-	plt.show()
+			yhat = net(x)
+
+			loss = F.cross_entropy(yhat, y.type(torch.LongTensor))
+			epoch_loss += loss.data.numpy()
+
+			optimizer.zero_grad()
+			loss.backward()
+			optimizer.step()
+
+		if epoch % 10 == 0:
+			print(f'Epoch {epoch}/{num_epochs}, loss: {epoch_loss}')
 
 
 if __name__ == '__main__':
@@ -50,30 +61,11 @@ if __name__ == '__main__':
 	parser.add_argument('-algorithm', type=str, default='SGD')
 	args = parser.parse_args()
 
-	data = np.load('mnist.npz')
-	num_classes = 10
-	x_train = data['X_train'][:1000].astype('float32')
-	targets_train = data['y_train'][:1000].astype('int32')
+	data = misc.load_mnist()
+	misc.plot_mnist(data[0])
 
-	x_valid = data['X_valid'][:500].astype('float32')
-	targets_valid = data['y_valid'][:500].astype('int32')
+	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
+	opt = torch.optim.SGD(net.parameters(), lr=1e-3)
 
-	x_test = data['X_test'][:500].astype('float32')
-	targets_test = data['y_test'][:500].astype('int32')
-
-	print("Information on dataset")
-	print("x_train", x_train.shape)
-	print("targets_train", targets_train.shape)
-	print("x_valid", x_valid.shape)
-	print("targets_valid", targets_valid.shape)
-	print("x_test", x_test.shape)
-	print("targets_test", targets_test.shape)
-
-	plot_mnist(x_train)
-
-
-
-	net = MLP()
-
-
+	fit(net, data, opt)
 

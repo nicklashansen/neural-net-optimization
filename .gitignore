@@ -1,1 +1,3 @@
-mnist.npz
+data/*
+*.xml
+*.pyc
