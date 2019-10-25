@@ -1,5 +1,4 @@
 import argparse
-
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -9,9 +8,7 @@ import torch.nn.functional as F
 import torch.nn.init as init
 from torch import utils
 from torch.nn import Parameter
-
 import misc
-
 
 class MLP(nn.Module):
 	"""
