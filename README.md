@@ -17,3 +17,9 @@ Material in this repository has been developed as part of a special course / stu
 [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
 
 [On the Variance of the Adaptive Learning Rate and Beyond](https://arxiv.org/abs/1908.03265v1)
+
+[Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610)
+
+[Why Learning of Large-Scale Neural Networks Behaves Like Convex Optimization](https://arxiv.org/abs/1903.02140v1)
+
+[Optimization Methods for Large-Scale Machine Learning)(https://arxiv.org/abs/1606.04838)
