@@ -1,17 +1,22 @@
+import argparse
+
+import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.init as init
 import torch.nn.functional as F
-from torch.nn import Parameter
+import torch.nn.init as init
 from torch import utils
-import matplotlib.pyplot as plt
-import argparse
+from torch.nn import Parameter
+
 import misc
 
 
 class MLP(nn.Module):
-
+	"""
+	A small multilayer perceptron with parameters that we can optimize for the task.
+	"""
 	def __init__(self, num_features, num_hidden, num_outputs):
 		super(MLP, self).__init__()
 
@@ -29,31 +34,43 @@ class MLP(nn.Module):
 
 
 def fit(net, data, optimizer):
+	"""
+	Fits parameters of a network `net` using `data` as training data and a given `optimizer`.
+	"""
 	batch_size = 64
-	num_epochs = 100
+	num_epochs = 250
 
-	x_train, y_train, x_val, y_val, _, _ = data
+	x_train, y_train, x_val, y_val = data
 
 	train_generator = utils.data.DataLoader(misc.Dataset(x_train, y_train), batch_size=batch_size)
 	val_generator = utils.data.DataLoader(misc.Dataset(x_val, y_val), batch_size=batch_size)
 
+	losses = misc.AvgLoss()
+	val_losses = misc.AvgLoss()
+
 	for epoch in range(num_epochs+1):
 
-		epoch_loss = 0
+		epoch_loss = misc.AvgLoss()
+		epoch_val_loss = misc.AvgLoss()
+
+		for x, y in val_generator:
+			epoch_val_loss += F.cross_entropy(net(x), y.type(torch.LongTensor))
 
 		for x, y in train_generator:
-
-			yhat = net(x)
-
-			loss = F.cross_entropy(yhat, y.type(torch.LongTensor))
-			epoch_loss += loss.data.numpy()
+			loss = F.cross_entropy(net(x), y.type(torch.LongTensor))
+			epoch_loss += loss
 
 			optimizer.zero_grad()
 			loss.backward()
 			optimizer.step()
 
 		if epoch % 10 == 0:
-			print(f'Epoch {epoch}/{num_epochs}, loss: {epoch_loss}')
+			print(f'Epoch {epoch}/{num_epochs}, loss: {epoch_loss}, val loss: {epoch_val_loss}')
+
+		losses += epoch_loss.losses
+		val_losses += epoch_val_loss.avg
+
+	misc.plot_loss(losses, val_losses, num_epochs)
 
 
 if __name__ == '__main__':
@@ -62,10 +79,12 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	data = misc.load_mnist()
+	print(f'Loaded data partitions: ({len(data[0])}, {len(data[2])}, {len(data[4])})')
+
 	misc.plot_mnist(data[0])
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
 	opt = torch.optim.SGD(net.parameters(), lr=1e-3)
+	#opt = torch.optim.Adam(net.parameters(), lr=1e-3)
 
-	fit(net, data, opt)
-
+	fit(net, data[:4], opt)
