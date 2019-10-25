@@ -23,3 +23,9 @@ Material in this repository has been developed as part of a special course / stu
 [Why Learning of Large-Scale Neural Networks Behaves Like Convex Optimization](https://arxiv.org/abs/1903.02140v1)
 
 [Optimization Methods for Large-Scale Machine Learning](https://arxiv.org/abs/1606.04838)
+
+## Problem and dataset
+
+For simplicity, we build a small MLP and train it on the MNIST dataset using our own implementations of the optimization algorithms (in PyTorch). In case you somehow stumbled into this repository without ever being exposed to the MNIST dataset, here's a few samples:
+
+[mnist](https://github.com/nicklashansen/neural-net-optimization/blob/master/mnist_examples.png?raw=true)
