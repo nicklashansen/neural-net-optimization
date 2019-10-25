@@ -9,6 +9,7 @@ import torch.nn.init as init
 from torch import utils
 from torch.nn import Parameter
 import misc
+import optimizers
 
 class MLP(nn.Module):
 	"""
@@ -81,7 +82,12 @@ if __name__ == '__main__':
 	misc.plot_mnist(data[0])
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
-	opt = torch.optim.SGD(net.parameters(), lr=1e-3)
+	opt = optimizers.SGD(
+		params=net.parameters(),
+		lr=1e-3
+	)
+
+	#opt = torch.optim.SGD(net.parameters(), lr=1e-3)
 	#opt = torch.optim.Adam(net.parameters(), lr=1e-3)
 
 	fit(net, data[:4], opt)
