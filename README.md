@@ -1,6 +1,6 @@
 # Optimization for Deep Learning
 
-This repository will contain implementations of various popular optimization algorithms for deep learning, including SGD, Adam, AdamW and RAdam. Work in progress!
+This repository will contain implementations of popular/recent optimization algorithms for deep learning, including SGD, Adam, AdamW and RAdam. Work in progress!
 
 _____
 
