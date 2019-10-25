@@ -28,4 +28,4 @@ Material in this repository has been developed as part of a special course / stu
 
 For simplicity, we build a small MLP and train it on the MNIST dataset using our own implementations of the optimization algorithms (in PyTorch). In case you somehow stumbled into this repository without ever being exposed to the MNIST dataset, here's a few samples:
 
-[mnist](https://github.com/nicklashansen/neural-net-optimization/blob/master/mnist_examples.png)
+![mnist](https://github.com/nicklashansen/neural-net-optimization/blob/master/mnist_examples.png)
