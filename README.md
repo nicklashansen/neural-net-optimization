@@ -11,6 +11,8 @@ Material in this repository has been developed as part of a special course / stu
 
 [An Overview of Gradient Descent Optimization Algorithms](https://arxiv.org/abs/1609.04747)
 
+[On the importance of initialization and momentum in deep learning](https://www.cs.toronto.edu/~fritz/absps/momentum.pdf)
+
 [Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)
 
 [On the Convergence of Adam and Beyond](https://arxiv.org/abs/1904.09237)
