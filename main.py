@@ -77,17 +77,14 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	data = misc.load_mnist()
+	misc.plot_mnist(data[0])
 	print(f'Loaded data partitions: ({len(data[0])}, {len(data[2])}, {len(data[4])})')
 
-	misc.plot_mnist(data[0])
-
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
+
 	opt = optimizers.SGD(
 		params=net.parameters(),
 		lr=1e-3
 	)
-
-	#opt = torch.optim.SGD(net.parameters(), lr=1e-3)
-	#opt = torch.optim.Adam(net.parameters(), lr=1e-3)
 
 	fit(net, data[:4], opt)
