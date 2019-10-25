@@ -4,6 +4,7 @@ This repository will contain implementations of various popular optimization alg
 
 _____
 
+
 ## Related papers
 
 Material in this repository has been developed as part of a special course / study. This is the tentative list of papers that we discuss:
@@ -23,6 +24,7 @@ Material in this repository has been developed as part of a special course / stu
 [Why Learning of Large-Scale Neural Networks Behaves Like Convex Optimization](https://arxiv.org/abs/1903.02140v1)
 
 [Optimization Methods for Large-Scale Machine Learning](https://arxiv.org/abs/1606.04838)
+
 
 ## Problem and dataset
 
