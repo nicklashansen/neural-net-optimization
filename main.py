@@ -72,6 +72,7 @@ def fit(net, data, optimizer, batch_size=64, num_epochs=250):
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-algorithm', type=str, default='SGD')
+	parser.add_argument('-num_epochs', type=int, default=250)
 	args = parser.parse_args()
 
 	data = misc.load_mnist()
@@ -80,29 +81,42 @@ if __name__ == '__main__':
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
 
-	sgd_net = deepcopy(net)
-	sgd_opt = optimizers.SGD(
-		params=sgd_net.parameters(),
-		lr=1e-3
-	)
-	sgd_loss = fit(sgd_net, data[:4], sgd_opt)
+	use_opt = ['sgd', 'sgd_momentum', 'sgd_nesterov']
+	#use_opt = ['sgd']
+	opt_losses = []
+	opt_labels = []
 
-	sgd_momentum_net = deepcopy(net)
-	sgd_momentum_opt = optimizers.SGD(
-		params=sgd_momentum_net.parameters(),
-		lr=1e-3,
-		mu=0.99
-	)
-	sgd_momentum_loss = fit(sgd_momentum_net, data[:4], sgd_momentum_opt)
+	if 'sgd' in use_opt:
+		sgd_net = deepcopy(net)
+		sgd_opt = optimizers.SGD(
+			params=sgd_net.parameters(),
+			lr=1e-3
+		)
+		sgd_loss = fit(sgd_net, data[:4], sgd_opt, num_epochs=args.num_epochs)
+		opt_losses.append(sgd_loss)
+		opt_labels.append('SGD')
 
-	sgd_nesterov_net = deepcopy(net)
-	sgd_nesterov_opt = optimizers.SGD(
-		params=sgd_nesterov_net.parameters(),
-		lr=1e-3,
-		mu=0.99,
-		nesterov=True
-	)
-	sgd_nesterov_loss = fit(sgd_nesterov_net, data[:4], sgd_nesterov_opt)
-	
-	misc.plot_losses([sgd_loss, sgd_momentum_loss, sgd_nesterov_loss], labels=['SGD', 'SGD w/ momentum', 'SGD w/ nesterov'], num_epochs=250)
-	
+	if 'sgd_momentum' in use_opt:
+		sgd_momentum_net = deepcopy(net)
+		sgd_momentum_opt = optimizers.SGD(
+			params=sgd_momentum_net.parameters(),
+			lr=1e-3,
+			mu=0.99
+		)
+		sgd_momentum_loss = fit(sgd_momentum_net, data[:4], sgd_momentum_opt, num_epochs=args.num_epochs)
+		opt_losses.append(sgd_momentum_loss)
+		opt_labels.append('SGD w/ momentum')
+
+	if 'sgd_nesterov' in use_opt:
+		sgd_nesterov_net = deepcopy(net)
+		sgd_nesterov_opt = optimizers.SGD(
+			params=sgd_nesterov_net.parameters(),
+			lr=1e-3,
+			mu=0.99,
+			nesterov=True
+		)
+		sgd_nesterov_loss = fit(sgd_nesterov_net, data[:4], sgd_nesterov_opt, num_epochs=args.num_epochs)
+		opt_losses.append(sgd_nesterov_loss)
+		opt_labels.append('SGD w/ Nesterov')
+
+	misc.plot_losses(opt_losses, labels=opt_labels, num_epochs=args.num_epochs, plot_epochs=True)

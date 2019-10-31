@@ -98,12 +98,22 @@ def plot_loss(losses, val_losses, num_epochs):
 	plt.clf()
 
 
-def plot_losses(losses, labels, num_epochs):
+def plot_losses(losses, labels, num_epochs, plot_epochs=False):
 	sns.set(style='darkgrid')
 	plt.figure(figsize=(12, 6))
-	
+
 	for i in range(len(losses)):
-		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), losses[i].losses, label=labels[i], alpha=0.75)
+		if plot_epochs:
+			epoch_losses = []
+			num_batches = len(losses[i].losses) // (num_epochs + 1)
+			for j in range(num_epochs + 1):
+				epoch_loss = 0
+				for k in range(num_batches):
+					epoch_loss += losses[i].losses[j * num_batches + k]
+				epoch_losses.append(epoch_loss)
+			plt.plot(range(num_epochs + 1), epoch_losses, label=labels[i], alpha=0.75)
+		else:
+			plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), losses[i].losses, label=labels[i], alpha=0.75)
 
 	plt.tight_layout(pad=2)
 	plt.xlabel('Epoch')
