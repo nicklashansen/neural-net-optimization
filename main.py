@@ -80,15 +80,6 @@ if __name__ == '__main__':
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
 
-	sgd_nesterov_net = deepcopy(net)
-	sgd_nesterov_opt = optimizers.SGD(
-		params=sgd_nesterov_net.parameters(),
-		lr=1e-3,
-		mu=0.9,
-		nesterov=True
-	)
-	sgd_nesterov_loss = fit(sgd_nesterov_net, data[:4], sgd_nesterov_opt)
-
 	sgd_net = deepcopy(net)
 	sgd_opt = optimizers.SGD(
 		params=sgd_net.parameters(),
@@ -100,8 +91,18 @@ if __name__ == '__main__':
 	sgd_momentum_opt = optimizers.SGD(
 		params=sgd_momentum_net.parameters(),
 		lr=1e-3,
-		mu=0.9
+		mu=0.99
 	)
 	sgd_momentum_loss = fit(sgd_momentum_net, data[:4], sgd_momentum_opt)
 
+	sgd_nesterov_net = deepcopy(net)
+	sgd_nesterov_opt = optimizers.SGD(
+		params=sgd_nesterov_net.parameters(),
+		lr=1e-3,
+		mu=0.99,
+		nesterov=True
+	)
+	sgd_nesterov_loss = fit(sgd_nesterov_net, data[:4], sgd_nesterov_opt)
+	
 	misc.plot_losses([sgd_loss, sgd_momentum_loss, sgd_nesterov_loss], labels=['SGD', 'SGD w/ momentum', 'SGD w/ nesterov'], num_epochs=250)
+	

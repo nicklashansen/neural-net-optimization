@@ -40,8 +40,5 @@ class SGD(Optimizer):
                         param.data += v
                         group['v'][idx] = v
 
-                    #look_a_head = param.data + mu * v
-                    #v = mu * v - lr * look_a_head.grad.data
-
                 else:
                     param.data -= lr * param.grad.data

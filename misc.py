@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from torch.utils import data
 
-def load_mnist(filename='data/mnist.npz', num_train=2048, num_val=256, num_test=512):
+def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=256, num_test=512):
 	"""
 	Loads a subset of the grayscale MNIST dataset and returns it as a tuple.
 	"""
