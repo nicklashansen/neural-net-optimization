@@ -10,6 +10,7 @@ from torch import utils
 from torch.nn import Parameter
 import misc
 import optimizers
+from copy import deepcopy
 
 class MLP(nn.Module):
 	"""
@@ -31,13 +32,10 @@ class MLP(nn.Module):
 		return x
 
 
-def fit(net, data, optimizer):
+def fit(net, data, optimizer, batch_size=64, num_epochs=250):
 	"""
 	Fits parameters of a network `net` using `data` as training data and a given `optimizer`.
 	"""
-	batch_size = 64
-	num_epochs = 250
-
 	x_train, y_train, x_val, y_val = data
 
 	train_generator = utils.data.DataLoader(misc.Dataset(x_train, y_train), batch_size=batch_size)
@@ -68,7 +66,7 @@ def fit(net, data, optimizer):
 		losses += epoch_loss.losses
 		val_losses += epoch_val_loss.avg
 
-	misc.plot_loss(losses, val_losses, num_epochs)
+	return losses
 
 
 if __name__ == '__main__':
@@ -82,9 +80,19 @@ if __name__ == '__main__':
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
 
-	opt = optimizers.SGD(
-		params=net.parameters(),
+	sgd_net = deepcopy(net)
+	sgd_opt = optimizers.SGD(
+		params=sgd_net.parameters(),
 		lr=1e-3
 	)
+	sgd_loss = fit(sgd_net, data[:4], sgd_opt)
 
-	fit(net, data[:4], opt)
+	sgd_momentum_net = deepcopy(net)
+	sgd_momentum_opt = optimizers.SGD(
+		params=sgd_momentum_net.parameters(),
+		lr=1e-3,
+		mu=0.9
+	)
+	sgd_momentum_loss = fit(sgd_momentum_net, data[:4], sgd_momentum_opt)
+
+	misc.plot_losses([sgd_loss, sgd_momentum_loss], labels=['SGD', 'SGD w/ momentum'], num_epochs=250)

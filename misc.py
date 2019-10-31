@@ -85,6 +85,7 @@ def plot_mnist(X):
 	plt.savefig('mnist_examples.png')
 	plt.clf()
 
+
 def plot_loss(losses, val_losses, num_epochs):
 	sns.set(style='darkgrid')
 	plt.figure(figsize=(12, 6))
@@ -95,3 +96,19 @@ def plot_loss(losses, val_losses, num_epochs):
 	plt.ylabel('Negative log likelihood')
 	plt.savefig('loss.png')
 	plt.clf()
+
+
+def plot_losses(losses, labels, num_epochs):
+	sns.set(style='darkgrid')
+	plt.figure(figsize=(12, 6))
+	
+	for i in range(len(losses)):
+		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), losses[i].losses, label=labels[i], alpha=0.75)
+
+	plt.tight_layout(pad=2)
+	plt.xlabel('Epoch')
+	plt.ylabel('Negative log likelihood')
+	plt.legend()
+	plt.savefig('loss.png')
+	plt.clf()
+
