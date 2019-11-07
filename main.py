@@ -81,10 +81,30 @@ if __name__ == '__main__':
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
 
-	use_opt = ['sgd', 'sgd_momentum', 'sgd_nesterov']
+	use_opt = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'adam']
 	#use_opt = ['sgd']
 	opt_losses = []
 	opt_labels = []
+
+	if 'adam' in use_opt:
+		adam_net = deepcopy(net)
+		adam_opt = optimizers.Adam(
+			params=adam_net.parameters(),
+			lr=1e-3
+		)
+		adam_loss = fit(adam_net, data[:4], adam_opt, num_epochs=args.num_epochs)
+		opt_losses.append(adam_loss)
+		opt_labels.append('Adam')
+
+	if 'adam' in use_opt:
+		adam_net = deepcopy(net)
+		adam_opt = torch.optim.Adam(
+			params=adam_net.parameters(),
+			lr=1e-3
+		)
+		adam_loss = fit(adam_net, data[:4], adam_opt, num_epochs=args.num_epochs)
+		opt_losses.append(adam_loss)
+		opt_labels.append('Adam p')
 
 	if 'sgd' in use_opt:
 		sgd_net = deepcopy(net)
