@@ -35,10 +35,18 @@ if __name__ == '__main__':
 		},
 		'adam': {
 			'lr': 1e-3
+		},
+		'adamW':{
+			'lr': 1e-3,
+			'weight_decay': 1e-4
+		},
+		'adam_l2':{
+			'lr': 1e-3,
+			'l2_reg': 1e-4
 		}
 	}
 
-	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam']
+	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW']
 	opt_losses = []
 
 	def do_stuff(opt):
