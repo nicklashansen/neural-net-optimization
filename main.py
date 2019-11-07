@@ -43,17 +43,11 @@ if __name__ == '__main__':
 
 	def do_stuff(opt):
 		net = MLP(num_features=784, num_hidden=64, num_outputs=10)
-
-		if 'sgd' in opt:
-			optimizer = optimizers.SGD(
-				params=net.parameters(),
-				**optim_dict[opt]
-			)
-		elif 'adam' in opt:
-			optimizer = optimizers.Adam(
-				params=net.parameters(),
-				**optim_dict[opt]
-			)
+		opt_class = getattr(optimizers, 'SGD' if 'sgd' in opt else 'Adam')
+		optimizer = opt_class(
+			params=net.parameters(),
+			**optim_dict[opt]
+		)
 
 		return fit(net, data[:4], optimizer, num_epochs=args.num_epochs)
 
