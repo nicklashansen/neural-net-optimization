@@ -1,166 +1,57 @@
 import argparse
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.nn.init as init
-from torch import utils
-from torch.nn import Parameter
-import misc
-import optimizers
 from copy import deepcopy
 
-class MLP(nn.Module):
-	"""
-	A small multilayer perceptron with parameters that we can optimize for the task.
-	"""
-	def __init__(self, num_features, num_hidden, num_outputs):
-		super(MLP, self).__init__()
-
-		self.W_1 = Parameter(init.xavier_normal_(torch.Tensor(num_hidden, num_features)))
-		self.b_1 = Parameter(init.constant_(torch.Tensor(num_hidden), 0))
-
-		self.W_2 = Parameter(init.xavier_normal_(torch.Tensor(num_outputs, num_hidden)))
-		self.b_2 = Parameter(init.constant_(torch.Tensor(num_outputs), 0))
-
-	def forward(self, x):
-		x = F.relu(F.linear(x, self.W_1, self.b_1))
-		x = F.linear(x, self.W_2, self.b_2)
-
-		return x
-
-
-def fit(net, data, optimizer, batch_size=64, num_epochs=250):
-	"""
-	Fits parameters of a network `net` using `data` as training data and a given `optimizer`.
-	"""
-	x_train, y_train, x_val, y_val = data
-
-	train_generator = utils.data.DataLoader(misc.Dataset(x_train, y_train), batch_size=batch_size)
-	val_generator = utils.data.DataLoader(misc.Dataset(x_val, y_val), batch_size=batch_size)
-
-	losses = misc.AvgLoss()
-	val_losses = misc.AvgLoss()
-
-	for epoch in range(num_epochs+1):
-
-		epoch_loss = misc.AvgLoss()
-		epoch_val_loss = misc.AvgLoss()
-
-		for x, y in val_generator:
-			epoch_val_loss += F.cross_entropy(net(x), y.type(torch.LongTensor))
-
-		for x, y in train_generator:
-			loss = F.cross_entropy(net(x), y.type(torch.LongTensor))
-			epoch_loss += loss
-
-			optimizer.zero_grad()
-			loss.backward()
-			optimizer.step()
-
-		if epoch % 10 == 0:
-			print(f'Epoch {epoch}/{num_epochs}, loss: {epoch_loss}, val loss: {epoch_val_loss}')
-
-		losses += epoch_loss.losses
-		val_losses += epoch_val_loss.avg
-
-	return losses
+import misc
+import optimizers
+from mlp import MLP, fit
 
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-algorithm', type=str, default='SGD')
-	parser.add_argument('-num_epochs', type=int, default=200)
+	parser.add_argument('-num_epochs', type=int, default=250)
 	args = parser.parse_args()
 
 	data = misc.load_mnist()
 	misc.plot_mnist(data[0])
 	print(f'Loaded data partitions: ({len(data[0])}, {len(data[2])}, {len(data[4])})')
 
-	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
+	optim_dict = {
+		'sgd': {
+			'lr': 1e-3
+		},
+		'sgd_momentum': {
+			'lr': 1e-3,
+			'mu': 0.99
+		},
+		'sgd_nesterov': {
+			'lr': 1e-3,
+			'mu': 0.99,
+			'nesterov': True
+		},
+		'sgd_weight_decay': {
+			'lr': 1e-3,
+			'mu': 0.99,
+			'weight_decay': 1e-6
+		},
+		'adam': {
+			'lr': 1e-3
+		}
+	}
 
-	use_opt = ['adam','adamW', 'adamL2']
-	#use_opt = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay']
+	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam']
 	opt_losses = []
-	opt_labels = []
 
-
-	if 'adamW' in use_opt:
-		adamW_net = deepcopy(net)
-		adamW_opt = optimizers.Adam(
-			params=adamW_net.parameters(),
-			lr=1e-3,
-			weight_decay=1e-4
+	def do_stuff(opt):
+		net = MLP(num_features=784, num_hidden=64, num_outputs=10)
+		opt_class = getattr(optimizers, 'SGD' if 'sgd' in opt else 'Adam')
+		optimizer = opt_class(
+			params=net.parameters(),
+			**optim_dict[opt]
 		)
-		adamW_loss = fit(adamW_net, data[:4], adamW_opt, num_epochs=args.num_epochs)
-		opt_losses.append(adamW_loss)
-		opt_labels.append('AdamW')
 
-	if 'adamL2' in use_opt:
-		adamL2_net = deepcopy(net)
-		adamL2_opt = optimizers.Adam(
-			params=adamL2_net.parameters(),
-			lr=1e-3,
-			l2_reg=1e-4
-		)
-		adamL2_loss = fit(adamL2_net, data[:4], adamL2_opt, num_epochs=args.num_epochs)
-		opt_losses.append(adamL2_loss)
-		opt_labels.append('Adam L2')
+		return fit(net, data[:4], optimizer, num_epochs=args.num_epochs)
 
-	if 'adam' in use_opt:
-		adam_net = deepcopy(net)
-		adam_opt = optimizers.Adam(
-			params=adam_net.parameters(),
-			lr=1e-3
-		)
-		adam_loss = fit(adam_net, data[:4], adam_opt, num_epochs=args.num_epochs)
-		opt_losses.append(adam_loss)
-		opt_labels.append('Adam')
-
-	if 'sgd' in use_opt:
-		sgd_net = deepcopy(net)
-		sgd_opt = optimizers.SGD(
-			params=sgd_net.parameters(),
-			lr=1e-3
-		)
-		sgd_loss = fit(sgd_net, data[:4], sgd_opt, num_epochs=args.num_epochs)
-		opt_losses.append(sgd_loss)
-		opt_labels.append('SGD')
-
-	if 'sgd_momentum' in use_opt:
-		sgd_momentum_net = deepcopy(net)
-		sgd_momentum_opt = optimizers.SGD(
-			params=sgd_momentum_net.parameters(),
-			lr=1e-3,
-			mu=0.99
-		)
-		sgd_momentum_loss = fit(sgd_momentum_net, data[:4], sgd_momentum_opt, num_epochs=args.num_epochs)
-		opt_losses.append(sgd_momentum_loss)
-		opt_labels.append('SGD w/ momentum')
-
-	if 'sgd_nesterov' in use_opt:
-		sgd_nesterov_net = deepcopy(net)
-		sgd_nesterov_opt = optimizers.SGD(
-			params=sgd_nesterov_net.parameters(),
-			lr=1e-3,
-			mu=0.99,
-			nesterov=True
-		)
-		sgd_nesterov_loss = fit(sgd_nesterov_net, data[:4], sgd_nesterov_opt, num_epochs=args.num_epochs)
-		opt_losses.append(sgd_nesterov_loss)
-		opt_labels.append('SGD w/ Nesterov')
-
-	if 'sgd_weight_decay' in use_opt:
-		sgd_weight_decay_net = deepcopy(net)
-		sgd_weight_decay_opt = optimizers.SGD(
-			params=sgd_weight_decay_net.parameters(),
-			lr=1e-3,
-			weight_decay=1e-5
-		)
-		sgd_weight_decay_loss = fit(sgd_weight_decay_net, data[:4], sgd_weight_decay_opt, num_epochs=args.num_epochs)
-		opt_losses.append(sgd_weight_decay_loss)
-		opt_labels.append('SGD w/ weight decay')
+	for opt in opt_labels:
+		opt_losses.append(do_stuff(opt))
 
 	misc.plot_losses(opt_losses, labels=opt_labels, num_epochs=args.num_epochs, plot_epochs=True)
