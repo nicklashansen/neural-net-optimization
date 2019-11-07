@@ -2,8 +2,8 @@ import torch
 from torch.optim import Optimizer
 
 class SGD(Optimizer):
-    def __init__(self, params, lr, mu=0, nesterov=False):
-        defaults = {'lr': lr, 'mu': mu, 'nesterov': nesterov}
+    def __init__(self, params, lr, mu=0, nesterov=False, weight_decay=0):
+        defaults = {'lr': lr, 'mu': mu, 'nesterov': nesterov, 'weight_decay': weight_decay}
         super(SGD, self).__init__(params, defaults)
 
     def step(self):
@@ -15,6 +15,7 @@ class SGD(Optimizer):
             lr = group['lr']
             mu = group['mu']
             nesterov = group['nesterov']
+            weight_decay = group['weight_decay']
 
             if mu != 0 and 'v' not in group:
                 group['v'] = []
@@ -26,19 +27,19 @@ class SGD(Optimizer):
                         group['theta'].append(param.data)
 
             for idx, param in enumerate(group['params']):
+                param.grad.data += weight_decay * param.data
+
                 if mu != 0:
+                    v = group['v'][idx]
+                    v = mu * v - lr * param.grad.data
+                    group['v'][idx] = v
+
                     if nesterov:
-                        v = group['v'][idx]
-                        v = mu * v - lr * param.grad.data
-                        group['v'][idx] = v
                         group['theta'][idx] += v
                         param.data = group['theta'][idx] + mu * v
 
                     else:
-                        v = group['v'][idx]
-                        v = mu * v - lr * param.grad.data
-                        param.data += v
-                        group['v'][idx] = v
+                        param.data += v        
 
                 else:
                     param.data -= lr * param.grad.data
