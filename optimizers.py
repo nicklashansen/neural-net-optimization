@@ -46,8 +46,8 @@ class SGD(Optimizer):
 
 
 class Adam(Optimizer):
-    def __init__(self, params, lr, beta1=0.9, beta2=0.999, nesterov=False):
-        defaults = {'lr': lr, 'beta1': beta1, 'beta2': beta2, 'nesterov': nesterov}
+    def __init__(self, params, lr, beta1=0.9, beta2=0.999, nesterov=False, l2_reg=0, weight_decay=0):
+        defaults = {'lr': lr, 'beta1': beta1, 'beta2': beta2, 'nesterov': nesterov, 'l2_reg': l2_reg, 'weight_decay': weight_decay}
         super(Adam, self).__init__(params, defaults)
 
     def step(self):
@@ -60,6 +60,8 @@ class Adam(Optimizer):
             beta1 = group['beta1']
             beta2 = group['beta2']
             nesterov = group['nesterov']
+            l2_reg = group['l2_reg']
+            weight_decay = group['weight_decay']
 
             if 'm' not in group and 'v' not in group:
                 group['m'] = []
@@ -74,6 +76,8 @@ class Adam(Optimizer):
                         group['theta'].append(param.data)
 
             for idx, param in enumerate(group['params']):
+                if l2_reg:
+                    param.grad.data += l2_reg * param.data
                 m = group['m'][idx]
                 v = group['v'][idx]
                 t = group['t']
@@ -81,7 +85,10 @@ class Adam(Optimizer):
                 v = beta2 * v + (1 - beta2) * param.grad.data**2
                 m_hat = m / (1 - beta1**t)
                 v_hat = v / (1 - beta2**t)
-                param.data += - lr * m_hat / (torch.sqrt(v_hat) + 1e-8)
+                if weight_decay:
+                    param.data += - lr * (m_hat / (torch.sqrt(v_hat) + 1e-8) + weight_decay * param.data)
+                else:
+                    param.data += - lr * m_hat / (torch.sqrt(v_hat) + 1e-8)
                 group['m'][idx] = m
                 group['v'][idx] = v
 

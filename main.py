@@ -81,10 +81,33 @@ if __name__ == '__main__':
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
 
-	use_opt = ['sgd', 'sgd_weight_decay']
+	use_opt = ['adam','adamW', 'adamL2']
 	#use_opt = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay']
 	opt_losses = []
 	opt_labels = []
+
+
+	if 'adamW' in use_opt:
+		adamW_net = deepcopy(net)
+		adamW_opt = optimizers.Adam(
+			params=adamW_net.parameters(),
+			lr=1e-3,
+			weight_decay=1e-4
+		)
+		adamW_loss = fit(adamW_net, data[:4], adamW_opt, num_epochs=args.num_epochs)
+		opt_losses.append(adamW_loss)
+		opt_labels.append('AdamW')
+
+	if 'adamL2' in use_opt:
+		adamL2_net = deepcopy(net)
+		adamL2_opt = optimizers.Adam(
+			params=adamL2_net.parameters(),
+			lr=1e-3,
+			l2_reg=1e-4
+		)
+		adamL2_loss = fit(adamL2_net, data[:4], adamL2_opt, num_epochs=args.num_epochs)
+		opt_losses.append(adamL2_loss)
+		opt_labels.append('Adam L2')
 
 	if 'adam' in use_opt:
 		adam_net = deepcopy(net)
@@ -95,16 +118,6 @@ if __name__ == '__main__':
 		adam_loss = fit(adam_net, data[:4], adam_opt, num_epochs=args.num_epochs)
 		opt_losses.append(adam_loss)
 		opt_labels.append('Adam')
-
-	if 'adam' in use_opt:
-		adam_net = deepcopy(net)
-		adam_opt = torch.optim.Adam(
-			params=adam_net.parameters(),
-			lr=1e-3
-		)
-		adam_loss = fit(adam_net, data[:4], adam_opt, num_epochs=args.num_epochs)
-		opt_losses.append(adam_loss)
-		opt_labels.append('Adam p')
 
 	if 'sgd' in use_opt:
 		sgd_net = deepcopy(net)
