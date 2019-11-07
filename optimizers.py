@@ -1,6 +1,7 @@
 import torch
 from torch.optim import Optimizer
 
+
 class SGD(Optimizer):
     def __init__(self, params, lr, mu=0, nesterov=False, weight_decay=0):
         defaults = {'lr': lr, 'mu': mu, 'nesterov': nesterov, 'weight_decay': weight_decay}
