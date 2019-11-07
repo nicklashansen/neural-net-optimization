@@ -72,7 +72,7 @@ def fit(net, data, optimizer, batch_size=64, num_epochs=250):
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-algorithm', type=str, default='SGD')
-	parser.add_argument('-num_epochs', type=int, default=250)
+	parser.add_argument('-num_epochs', type=int, default=200)
 	args = parser.parse_args()
 
 	data = misc.load_mnist()
@@ -81,8 +81,8 @@ if __name__ == '__main__':
 
 	net = MLP(num_features=784, num_hidden=64, num_outputs=10)
 
-	use_opt = ['sgd', 'sgd_momentum', 'sgd_nesterov']
-	#use_opt = ['sgd']
+	use_opt = ['sgd', 'sgd_weight_decay']
+	#use_opt = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay']
 	opt_losses = []
 	opt_labels = []
 
@@ -118,5 +118,16 @@ if __name__ == '__main__':
 		sgd_nesterov_loss = fit(sgd_nesterov_net, data[:4], sgd_nesterov_opt, num_epochs=args.num_epochs)
 		opt_losses.append(sgd_nesterov_loss)
 		opt_labels.append('SGD w/ Nesterov')
+	
+	if 'sgd_weight_decay' in use_opt:
+		sgd_weight_decay_net = deepcopy(net)
+		sgd_weight_decay_opt = optimizers.SGD(
+			params=sgd_weight_decay_net.parameters(),
+			lr=1e-3,
+			weight_decay=1e-5
+		)
+		sgd_weight_decay_loss = fit(sgd_weight_decay_net, data[:4], sgd_weight_decay_opt, num_epochs=args.num_epochs)
+		opt_losses.append(sgd_weight_decay_loss)
+		opt_labels.append('SGD w/ weight decay')
 
 	misc.plot_losses(opt_losses, labels=opt_labels, num_epochs=args.num_epochs, plot_epochs=True)
