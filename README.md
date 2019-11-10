@@ -25,6 +25,8 @@ Material in this repository has been developed as part of a special course / stu
 
 [Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610)
 
+[The Marginal Value of Adaptive Gradient Methods in Machine Learning](https://arxiv.org/abs/1705.08292)
+
 [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
 
 [On the Convergence of AdaBound and its Connection to SGD](https://arxiv.org/abs/1908.04457v1)
