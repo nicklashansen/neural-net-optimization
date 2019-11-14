@@ -10,7 +10,7 @@ from torch.utils import data
 from torchvision import transforms
 
 
-def load_cifar(num_train=128, num_val=64, batch_size=64):
+def load_cifar(num_train=8192, num_val=512, batch_size=64):
 	"""
 	Loads a subset of the CIFAR dataset and returns it as a tuple.
 	"""

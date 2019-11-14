@@ -11,6 +11,7 @@ from networks import MLP, CNN, fit
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-num_epochs', type=int, default=100)
+	parser.add_argument('-only_plot', type=bool, default=False)
 	args = parser.parse_args()
 
 	data = misc.load_cifar()
@@ -47,7 +48,7 @@ if __name__ == '__main__':
 		}
 	}
 
-	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW']
+	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay']#, 'adam', 'adamW']
 	opt_losses, opt_val_losses = [], []
 
 	def do_stuff(opt):
@@ -62,10 +63,16 @@ if __name__ == '__main__':
 		return fit(net, data, optimizer, num_epochs=args.num_epochs)
 
 	for opt in opt_labels:
-		losses, val_losses = do_stuff(opt)
-		misc.save_losses(losses, filename=opt)
+		if args.only_plot:
+			losses = misc.load_losses(filename=opt)
+			val_losses = misc.load_losses(filename=opt+'_val')
+		else:
+			losses, val_losses = do_stuff(opt)
+			misc.save_losses(losses, filename=opt)
+			misc.save_losses(val_losses, filename=opt+'_val')
+
 		opt_losses.append(losses)
 		opt_val_losses.append(val_losses)
 
-	if torch.cuda.is_available():
+	if not torch.cuda.is_available():
 		misc.plot_losses(opt_losses, opt_val_losses, labels=opt_labels, num_epochs=args.num_epochs, plot_epochs=False)

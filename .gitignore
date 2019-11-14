@@ -3,3 +3,4 @@ data/*
 losses/*
 *.xml
 *.pyc
+*.sh
