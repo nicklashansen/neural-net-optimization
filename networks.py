@@ -49,7 +49,14 @@ class CNN(nn.Module):
 
 		self.out_lin = nn.Linear(self.num_filters*self.width*self.height, num_classes)
 
+		if torch.cuda.is_available():
+			self.cuda()
+
+
 	def forward(self, x):
+		if torch.cuda.is_available():
+			x = x.cuda()
+
 		x = F.relu(self.conv_in(x))
 		x = self.cnn(x)
 		x = x.reshape(x.size(0), -1)
@@ -57,7 +64,7 @@ class CNN(nn.Module):
 		return self.out_lin(x)
 
 
-def fit(net, data, optimizer, batch_size=64, num_epochs=250):
+def fit(net, data, optimizer, batch_size=128, num_epochs=250):
 	"""
 	Fits parameters of a network `net` using `data` as training data and a given `optimizer`.
 	"""
@@ -73,17 +80,21 @@ def fit(net, data, optimizer, batch_size=64, num_epochs=250):
 		epoch_val_loss = misc.AvgLoss()
 
 		for x, y in val_generator:
-			epoch_val_loss += F.cross_entropy(net(x), y.type(torch.LongTensor))
+			y = y.type(torch.LongTensor)
+			if torch.cuda.is_available(): y = y.cuda()
+			epoch_val_loss += F.cross_entropy(net(x), y).cpu()
 
 		for x, y in train_generator:
-			loss = F.cross_entropy(net(x), y.type(torch.LongTensor))
+			y = y.type(torch.LongTensor)
+			if torch.cuda.is_available(): y = y.cuda()
+			loss = F.cross_entropy(net(x), y).cpu()
 			epoch_loss += loss
 
 			optimizer.zero_grad()
 			loss.backward()
 			optimizer.step()
 
-		if epoch % 10 == 0:
+		if epoch % 2 == 0:
 			print(f'Epoch {epoch}/{num_epochs}, loss: {epoch_loss}, val loss: {epoch_val_loss}')
 
 		losses += epoch_loss.losses
