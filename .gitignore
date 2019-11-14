@@ -1,4 +1,5 @@
 .vscode/*
 data/*
+losses/*
 *.xml
 *.pyc

@@ -1,13 +1,16 @@
+import os
+import pickle as pkl
+
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 import torch
 import torchvision
-from torchvision import transforms
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from torch.utils import data
+from torchvision import transforms
 
 
-def load_cifar(num_train=4096, num_val=256, batch_size=128):
+def load_cifar(num_train=128, num_val=64, batch_size=64):
 	"""
 	Loads a subset of the CIFAR dataset and returns it as a tuple.
 	"""
@@ -86,6 +89,17 @@ class Dataset(data.Dataset):
 		return self.X[idx], self.y[idx]
 
 
+def save_losses(losses, filename:str):
+	if not os.path.exists('losses/'): os.makedirs('losses/')
+	with open(f'losses/{filename}.pkl', 'wb') as f:
+		pkl.dump(losses, f, protocol=pkl.HIGHEST_PROTOCOL)
+
+
+def load_losses(filename:str):
+	with open(f'losses/{filename}.pkl', 'rb') as f:
+		return pkl.load(f)
+
+
 def plot_mnist(X):
 	idx, dim, classes = 0, 28, 10
 	canvas = np.zeros((dim*classes, classes*dim))
@@ -116,9 +130,11 @@ def plot_loss(losses, val_losses, num_epochs):
 	plt.clf()
 
 
-def plot_losses(losses, labels, num_epochs, plot_epochs=False):
+def plot_losses(losses, val_losses, labels, num_epochs, plot_epochs=False):
 	sns.set(style='darkgrid')
 	plt.figure(figsize=(12, 6))
+
+	colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
 
 	for i in range(len(losses)):
 		if plot_epochs:
@@ -131,12 +147,12 @@ def plot_losses(losses, labels, num_epochs, plot_epochs=False):
 				epoch_losses.append(epoch_loss)
 			plt.plot(range(num_epochs + 1), epoch_losses, label=labels[i], alpha=0.75)
 		else:
-			plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), losses[i].losses, label=labels[i], alpha=0.75)
+			plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), losses[i].losses, label=labels[i], alpha=0.75, c=colors[i])
+			plt.plot(np.linspace(0, num_epochs, num=len(val_losses[i])), val_losses[i].losses, alpha=0.75, linestyle='--', c=colors[i])
 
 	plt.tight_layout(pad=2)
 	plt.xlabel('Epoch')
 	plt.ylabel('Negative log likelihood')
-	plt.legend()
+	plt.legend(loc='upper right')
 	plt.savefig('loss.png')
 	plt.clf()
-
