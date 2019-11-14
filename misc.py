@@ -1,8 +1,23 @@
 import torch
+import torchvision
+from torchvision import transforms
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from torch.utils import data
+
+
+def load_cifar(num_train=4096, num_val=256, batch_size=128):
+	"""
+	Loads a subset of the CIFAR dataset and returns it as a tuple.
+	"""
+	transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5),(0.5, 0.5, 0.5))])
+
+	train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+	val_dataset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+
+	return train_dataset, val_dataset
+
 
 def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=256, num_test=512):
 	"""
