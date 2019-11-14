@@ -17,7 +17,7 @@ class CNN(nn.Module):
 		self.conv_in = nn.Conv2d(self.channels, self.num_filters, kernel_size=3, padding=1)
 		cnn = []
 		for _ in range(num_layers):
-			cnn.append(nn.Conv2d(self.num_filters, kernel_size=3, padding=1))
+			cnn.append(nn.Conv2d(self.num_filters, self.num_filters, kernel_size=3, padding=1))
 			cnn.append(nn.ReLU())
 		self.cnn = nn.Sequential(*cnn)
 
