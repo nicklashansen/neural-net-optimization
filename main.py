@@ -11,9 +11,8 @@ if __name__ == '__main__':
 	parser.add_argument('-num_epochs', type=int, default=250)
 	args = parser.parse_args()
 
-	data = misc.load_mnist()
-	misc.plot_mnist(data[0])
-	print(f'Loaded data partitions: ({len(data[0])}, {len(data[2])}, {len(data[4])})')
+	data = misc.load_cifar()
+	print(f'Loaded data partitions: ({len(data[0])}), ({len(data[1])})')
 
 	optim_dict = {
 		'sgd': {
@@ -57,7 +56,7 @@ if __name__ == '__main__':
 			**optim_dict[opt]
 		)
 
-		return fit(net, data[:4], optimizer, num_epochs=args.num_epochs)
+		return fit(net, data, optimizer, num_epochs=args.num_epochs)
 
 	for opt in opt_labels:
 		opt_losses.append(do_stuff(opt))

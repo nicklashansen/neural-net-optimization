@@ -32,10 +32,8 @@ def fit(net, data, optimizer, batch_size=64, num_epochs=250):
 	"""
 	Fits parameters of a network `net` using `data` as training data and a given `optimizer`.
 	"""
-	x_train, y_train, x_val, y_val = data
-
-	train_generator = utils.data.DataLoader(misc.Dataset(x_train, y_train), batch_size=batch_size)
-	val_generator = utils.data.DataLoader(misc.Dataset(x_val, y_val), batch_size=batch_size)
+	train_generator = utils.data.DataLoader(data[0], batch_size=batch_size)
+	val_generator = utils.data.DataLoader(data[1], batch_size=batch_size)
 
 	losses = misc.AvgLoss()
 	val_losses = misc.AvgLoss()
