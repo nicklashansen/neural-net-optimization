@@ -3,12 +3,12 @@ from copy import deepcopy
 
 import misc
 import optimizers
-from mlp import MLP, fit
+from networks import MLP, CNN, fit
 
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-num_epochs', type=int, default=250)
+	parser.add_argument('-num_epochs', type=int, default=100)
 	args = parser.parse_args()
 
 	data = misc.load_cifar()
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 	opt_losses = []
 
 	def do_stuff(opt):
-		net = MLP(num_features=784, num_hidden=64, num_outputs=10)
+		net = CNN()
 		opt_class = getattr(optimizers, 'SGD' if 'sgd' in opt else 'Adam')
 		optimizer = opt_class(
 			params=net.parameters(),
