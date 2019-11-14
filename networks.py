@@ -100,4 +100,4 @@ def fit(net, data, optimizer, batch_size=128, num_epochs=250):
 		losses += epoch_loss.losses
 		val_losses += epoch_val_loss.avg
 
-	return losses
+	return losses, val_losses

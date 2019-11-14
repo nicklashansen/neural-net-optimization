@@ -1,6 +1,8 @@
 import argparse
 from copy import deepcopy
 
+import torch
+
 import misc
 import optimizers
 from networks import MLP, CNN, fit
@@ -46,9 +48,10 @@ if __name__ == '__main__':
 	}
 
 	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW']
-	opt_losses = []
+	opt_losses, opt_val_losses = [], []
 
 	def do_stuff(opt):
+		print(f'\nTraining {opt} for {args.num_epochs} epochs...')
 		net = CNN()
 		opt_class = getattr(optimizers, 'SGD' if 'sgd' in opt else 'Adam')
 		optimizer = opt_class(
@@ -59,6 +62,10 @@ if __name__ == '__main__':
 		return fit(net, data, optimizer, num_epochs=args.num_epochs)
 
 	for opt in opt_labels:
-		opt_losses.append(do_stuff(opt))
+		losses, val_losses = do_stuff(opt)
+		misc.save_losses(losses, filename=opt)
+		opt_losses.append(losses)
+		opt_val_losses.append(val_losses)
 
-	misc.plot_losses(opt_losses, labels=opt_labels, num_epochs=args.num_epochs, plot_epochs=True)
+	if torch.cuda.is_available():
+		misc.plot_losses(opt_losses, opt_val_losses, labels=opt_labels, num_epochs=args.num_epochs, plot_epochs=False)
