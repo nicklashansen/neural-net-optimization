@@ -11,7 +11,7 @@ if __name__ == '__main__':
 	parser.add_argument('-num_epochs', type=int, default=100)
 	args = parser.parse_args()
 
-	data = misc.load_cifar()
+	data = misc.load_cifar(num_train=256)
 	print(f'Loaded data partitions: ({len(data[0])}), ({len(data[1])})')
 
 	optim_dict = {
@@ -42,10 +42,21 @@ if __name__ == '__main__':
 		'adam_l2':{
 			'lr': 1e-3,
 			'l2_reg': 1e-4
+		},
+		'adamR': {
+			'lr': 1e-2,
+			'rectified': 1
+		},
+		'adamRW': {
+			'lr': 1e-2,
+			'rectified': 1,
+			'weight_decay': 1e-4
 		}
+
 	}
 
-	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW']
+	#opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW']
+	opt_labels = ['adamR', 'adamRW', 'adam', 'adamW']
 	opt_losses = []
 
 	def do_stuff(opt):

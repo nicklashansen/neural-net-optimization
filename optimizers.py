@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from torch.optim import Optimizer
 
 
@@ -78,29 +79,24 @@ class Adam(Optimizer):
                     if nesterov:
                         group['theta'].append(param.data)
 
-            if rectified and 'rho' not in group:
-                t = group['t']
-                group['rho_inf'] = 2 / (1 - beta2) - 1
-                group['rho'] = group['rho_inf'] - 2 * t * beta2**t / (1 - beta2**t)
-
             for idx, param in enumerate(group['params']):
                 if l2_reg:
                     param.grad.data += l2_reg * param.data
                 m = group['m'][idx]
                 v = group['v'][idx]
                 t = group['t']
-                rho = group['rho']
-                rho_inf = group['rho_inf']
                 m = beta1 * m + (1 - beta1) * param.grad.data
                 v = beta2 * v + (1 - beta2) * param.grad.data**2
                 m_hat = m / (1 - beta1**t)
                 v_hat = v / (1 - beta2**t)
 
                 if rectified:
+                    rho_inf = 2 / (1 - beta2) - 1
+                    rho = rho_inf - 2 * t * beta2**t / (1 - beta2**t)
                     if rho > 4:
                         numerator = (rho - 4) * (rho - 2) * rho_inf
                         denominator = (rho_inf - 4) * (rho_inf - 2) * rho
-                        r = torch.sqrt(numerator / denominator)
+                        r = np.sqrt(numerator / denominator)
                         param.data += - lr * r * m_hat / (torch.sqrt(v_hat) + 1e-8)
                     else:
                         param.data += - lr * m_hat
@@ -119,4 +115,3 @@ class Adam(Optimizer):
                 group['v'][idx] = v
 
             group['t'] += 1
-            
