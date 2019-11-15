@@ -12,7 +12,7 @@ class MLP(nn.Module):
 	"""
 	A small multilayer perceptron with parameters that we can optimize for the task.
 	"""
-	def __init__(self, num_features, num_hidden, num_outputs):
+	def __init__(self, num_features=784, num_hidden=64, num_outputs=10):
 		super(MLP, self).__init__()
 
 		self.W_1 = Parameter(init.xavier_normal_(torch.Tensor(num_hidden, num_features)))

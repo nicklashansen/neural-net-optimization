@@ -4,3 +4,4 @@ losses/*
 *.xml
 *.pyc
 *.sh
+*.pkl

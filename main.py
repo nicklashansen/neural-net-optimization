@@ -11,10 +11,17 @@ from networks import MLP, CNN, fit
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-num_epochs', type=int, default=100)
+	parser.add_argument('-dataset', type=str, default='mnist')
+	parser.add_argument('-num_train', type=int, default=4096)
+	parser.add_argument('-num_val', type=int, default=512)
 	parser.add_argument('-only_plot', type=bool, default=False)
 	args = parser.parse_args()
 
-	data = misc.load_cifar()
+	data = getattr(misc, 'load_'+args.dataset)(
+		num_train=args.num_train,
+		num_val=args.num_val
+	)
+
 	print(f'Loaded data partitions: ({len(data[0])}), ({len(data[1])})')
 
 	optim_dict = {
@@ -57,12 +64,12 @@ if __name__ == '__main__':
 		}
 	}
 
-	opt_labels = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW']
-	opt_losses, opt_val_losses = [], []
+	opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW']
+	opt_losses, opt_val_losses, opt_labels = [], [], []
 
 	def do_stuff(opt):
 		print(f'\nTraining {opt} for {args.num_epochs} epochs...')
-		net = CNN()
+		net = CNN() if args.dataset == 'cifar' else MLP()
 		opt_class = getattr(optimizers, 'SGD' if 'sgd' in opt else 'Adam')
 		optimizer = opt_class(
 			params=net.parameters(),
@@ -71,17 +78,20 @@ if __name__ == '__main__':
 
 		return fit(net, data, optimizer, num_epochs=args.num_epochs)
 
-	for opt in opt_labels:
+	for opt in opt_tasks:
 		if args.only_plot:
-			losses = misc.load_losses(filename=opt)
-			val_losses = misc.load_losses(filename=opt+'_val')
+			losses = misc.load_losses(dataset=args.dataset, filename=opt)
+			val_losses = misc.load_losses(dataset=args.dataset, filename=opt+'_val')
 		else:
 			losses, val_losses = do_stuff(opt)
-			misc.save_losses(losses, filename=opt)
-			misc.save_losses(val_losses, filename=opt+'_val')
+			misc.save_losses(losses, dataset=args.dataset, filename=opt)
+			misc.save_losses(val_losses, dataset=args.dataset, filename=opt+'_val')
 
-		opt_losses.append(losses)
-		opt_val_losses.append(val_losses)
+		if losses is not None:
+			opt_losses.append(losses)
+			opt_val_losses.append(val_losses)
+			opt_labels.append(opt)
 
 	if not torch.cuda.is_available():
-		misc.plot_losses(opt_losses, opt_val_losses, labels=opt_labels, num_epochs=args.num_epochs, plot_epochs=False)
+		assert len(opt_losses) == len(opt_val_losses)
+		misc.plot_losses(opt_losses, opt_val_losses, labels=opt_labels, num_epochs=args.num_epochs, title=args.dataset, plot_epochs=False)

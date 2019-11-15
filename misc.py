@@ -3,6 +3,7 @@ import pickle as pkl
 
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.signal import savgol_filter
 import seaborn as sns
 import torch
 import torchvision
@@ -10,7 +11,7 @@ from torch.utils import data
 from torchvision import transforms
 
 
-def load_cifar(num_train=8192, num_val=512, batch_size=64):
+def load_cifar(num_train=8192, num_val=512):
 	"""
 	Loads a subset of the CIFAR dataset and returns it as a tuple.
 	"""
@@ -25,7 +26,7 @@ def load_cifar(num_train=8192, num_val=512, batch_size=64):
 	return train_dataset, val_dataset
 
 
-def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=256, num_test=512):
+def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=256):
 	"""
 	Loads a subset of the grayscale MNIST dataset and returns it as a tuple.
 	"""
@@ -37,10 +38,10 @@ def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=256, num_test=
 	x_valid = data['X_valid'][:num_val].astype('float32')
 	y_valid = data['y_valid'][:num_val].astype('int32')
 
-	x_test = data['X_test'][:num_test].astype('float32')
-	y_test = data['y_test'][:num_test].astype('int32')
+	train_dataset = Dataset(x_train, y_train)
+	val_dataset = Dataset(x_valid, y_valid)
 
-	return x_train, y_train, x_valid, y_valid, x_test, y_test
+	return train_dataset, val_dataset
 
 
 class AvgLoss():
@@ -89,15 +90,18 @@ class Dataset(data.Dataset):
 		return self.X[idx], self.y[idx]
 
 
-def save_losses(losses, filename:str):
-	if not os.path.exists('losses/'): os.makedirs('losses/')
-	with open(f'losses/{filename}.pkl', 'wb') as f:
+def save_losses(losses, dataset:str, filename:str):
+	if not os.path.exists(f'losses_{dataset}/'): os.makedirs(f'losses_{dataset}/')
+	with open(f'losses_{dataset}/{filename}.pkl', 'wb') as f:
 		pkl.dump(losses, f, protocol=pkl.HIGHEST_PROTOCOL)
 
 
-def load_losses(filename:str):
-	with open(f'losses/{filename}.pkl', 'rb') as f:
-		return pkl.load(f)
+def load_losses(dataset:str, filename:str):
+	try:
+		with open(f'losses_{dataset}/{filename}.pkl', 'rb') as f:
+			return pkl.load(f)
+	except:
+		return None
 
 
 def plot_mnist(X):
@@ -130,29 +134,22 @@ def plot_loss(losses, val_losses, num_epochs):
 	plt.clf()
 
 
-def plot_losses(losses, val_losses, labels, num_epochs, plot_epochs=False):
+def plot_losses(losses, val_losses, labels, num_epochs, title, plot_epochs=False):
 	sns.set(style='darkgrid')
 	plt.figure(figsize=(12, 6))
-
 	colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
 
 	for i in range(len(losses)):
-		if plot_epochs:
-			epoch_losses = []
-			num_batches = len(losses[i].losses) // (num_epochs + 1)
-			for j in range(num_epochs + 1):
-				epoch_loss = 0
-				for k in range(num_batches):
-					epoch_loss += losses[i].losses[j * num_batches + k]
-				epoch_losses.append(epoch_loss)
-			plt.plot(range(num_epochs + 1), epoch_losses, label=labels[i], alpha=0.75)
-		else:
-			plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), losses[i].losses, label=labels[i], alpha=0.75, c=colors[i])
-			plt.plot(np.linspace(0, num_epochs, num=len(val_losses[i])), val_losses[i].losses, alpha=0.75, linestyle='--', c=colors[i])
+		smoothed_losses = savgol_filter(losses[i].losses, 61, 3)
+		smoothed_losses_err = savgol_filter(losses[i].losses, 21, 3)
+		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smoothed_losses, label=labels[i], alpha=1, c=colors[i])
+		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smoothed_losses_err, alpha=0.25, c=colors[i])
+		#plt.plot(np.linspace(0, num_epochs, num=len(val_losses[i])), val_losses[i].losses, alpha=0.75, linestyle='--', c=colors[i])
 
 	plt.tight_layout(pad=2)
 	plt.xlabel('Epoch')
-	plt.ylabel('Negative log likelihood')
+	plt.ylabel('Cross-entropy')
+	plt.title(title)
 	plt.legend(loc='upper right')
-	plt.savefig('loss.png')
+	plt.savefig(f'loss_{title}.png')
 	plt.clf()
