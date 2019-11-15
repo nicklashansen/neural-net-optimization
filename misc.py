@@ -134,7 +134,7 @@ def plot_loss(losses, val_losses, num_epochs):
 	plt.clf()
 
 
-def plot_losses(losses, val_losses, labels, num_epochs, title, plot_epochs=False):
+def plot_losses(losses, val_losses, labels, num_epochs, title, plot_val=False):
 	sns.set(style='darkgrid')
 	plt.figure(figsize=(12, 6))
 	colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
@@ -142,9 +142,10 @@ def plot_losses(losses, val_losses, labels, num_epochs, title, plot_epochs=False
 	for i in range(len(losses)):
 		smoothed_losses = savgol_filter(losses[i].losses, 61, 3)
 		smoothed_losses_err = savgol_filter(losses[i].losses, 21, 3)
-		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smoothed_losses, label=labels[i], alpha=1, c=colors[i])
-		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smoothed_losses_err, alpha=0.25, c=colors[i])
-		#plt.plot(np.linspace(0, num_epochs, num=len(val_losses[i])), val_losses[i].losses, alpha=0.75, linestyle='--', c=colors[i])
+		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smooth(losses[i].losses, 61), label=labels[i], alpha=1, c=colors[i])
+		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smooth(losses[i].losses, 21), alpha=0.25, c=colors[i])
+		if plot_val:
+			plt.plot(np.linspace(0, num_epochs, num=len(val_losses[i])), smooth(val_losses[i].losses, 61), alpha=1, linestyle='--', c=colors[i])
 
 	plt.tight_layout(pad=2)
 	plt.xlabel('Epoch')
@@ -153,3 +154,7 @@ def plot_losses(losses, val_losses, labels, num_epochs, title, plot_epochs=False
 	plt.legend(loc='upper right')
 	plt.savefig(f'loss_{title}.png')
 	plt.clf()
+
+
+def smooth(signal, kernel_size, polyorder=3):
+	return savgol_filter(signal, kernel_size, polyorder)

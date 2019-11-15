@@ -98,6 +98,6 @@ def fit(net, data, optimizer, batch_size=128, num_epochs=250):
 			print(f'Epoch {epoch}/{num_epochs}, loss: {epoch_loss}, val loss: {epoch_val_loss}')
 
 		losses += epoch_loss.losses
-		val_losses += epoch_val_loss.avg
+		val_losses += epoch_val_loss.losses
 
 	return losses, val_losses

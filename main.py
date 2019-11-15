@@ -12,8 +12,8 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-num_epochs', type=int, default=100)
 	parser.add_argument('-dataset', type=str, default='mnist')
-	parser.add_argument('-num_train', type=int, default=4096)
-	parser.add_argument('-num_val', type=int, default=512)
+	parser.add_argument('-num_train', type=int, default=8192)
+	parser.add_argument('-num_val', type=int, default=1024)
 	parser.add_argument('-only_plot', type=bool, default=False)
 	args = parser.parse_args()
 
@@ -54,12 +54,12 @@ if __name__ == '__main__':
 			'l2_reg': 1e-4
 		},
 		'Radam': {
-			'lr': 1e-2,
-			'rectified': 1
+			'lr': 1e-3,
+			'rectified': True
 		},
 		'RadamW': {
-			'lr': 1e-2,
-			'rectified': 1,
+			'lr': 1e-3,
+			'rectified': True,
 			'weight_decay': 1e-4
 		}
 	}
@@ -94,4 +94,4 @@ if __name__ == '__main__':
 
 	if not torch.cuda.is_available():
 		assert len(opt_losses) == len(opt_val_losses)
-		misc.plot_losses(opt_losses, opt_val_losses, labels=opt_labels, num_epochs=args.num_epochs, title=args.dataset, plot_epochs=False)
+		misc.plot_losses(opt_losses, opt_val_losses, labels=opt_labels, num_epochs=args.num_epochs, title=args.dataset, plot_val=False)
