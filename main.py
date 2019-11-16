@@ -61,6 +61,10 @@ if __name__ == '__main__':
 			'lr': 1e-3,
 			'rectified': True,
 			'weight_decay': 1e-4
+		},
+		'RMSProp': {
+			'lr': 1e-3,
+			'beta2': 0.999,
 		}
 	}
 

@@ -101,11 +101,6 @@ class Adam(Optimizer):
                     else:
                         param.data += - lr * m_hat
                 else:
-                    #if weight_decay:
-                    #    param.data += - lr * (m_hat / (torch.sqrt(v_hat) + 1e-8) + weight_decay * param.data)
-                    #else:
-                    #    param.data += - lr * m_hat / (torch.sqrt(v_hat) + 1e-8)
-
                     param.data += - lr * m_hat / (torch.sqrt(v_hat) + 1e-8)
 
                 if weight_decay:
@@ -115,3 +110,8 @@ class Adam(Optimizer):
                 group['v'][idx] = v
 
             group['t'] += 1
+
+
+class RMSProp(Adam):
+    def __init__(self, params, lr, beta2):
+        super(RMSProp, self).__init__(params, lr, beta2=beta2, beta1=0)
