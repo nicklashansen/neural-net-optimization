@@ -1,6 +1,6 @@
 # Optimization for Deep Learning
 
-This repository will contain implementations of popular/recent optimization algorithms for deep learning, including SGD, Adam, AdamW and RAdam. Work in progress!
+This repository will contain PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, Adam, Nadam, AdamW and RAdam. Work in progress!
 
 _____
 
@@ -36,8 +36,6 @@ Material in this repository has been developed as part of a special course / stu
 [Optimization Methods for Large-Scale Machine Learning](https://arxiv.org/abs/1606.04838)
 
 
-## Problem and dataset
+## How to run
 
-For simplicity, we build a small MLP and train it on the MNIST dataset using our own implementations of the optimization algorithms (in PyTorch). In case you somehow stumbled into this repository without ever being exposed to the MNIST dataset, here's a few samples:
-
-![mnist](https://github.com/nicklashansen/neural-net-optimization/blob/master/mnist_examples.png)
+You can run the experiments and algorithms by calling ```python main.py``` with arguments as specified in the file. The algorithms can be run on two different datasets, MNIST and CIFAR-10. For MNIST a MLP is used, whereas a CNN is used for CIFAR-10. You may optionally decrease the size of the dataset to decrease computational complexity.
