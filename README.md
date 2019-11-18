@@ -23,19 +23,35 @@ Material in this repository has been developed as part of a special course / stu
 
 [On the Variance of the Adaptive Learning Rate and Beyond](https://arxiv.org/abs/1908.03265v1)
 
-[Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610)
-
-[The Marginal Value of Adaptive Gradient Methods in Machine Learning](https://arxiv.org/abs/1705.08292)
+[Incorporating Nesterov Momentum Into Adam](https://openreview.net/pdf?id=OM0jvwB8jIp57ZJjtNEZ)
 
 [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
 
 [On the Convergence of AdaBound and its Connection to SGD](https://arxiv.org/abs/1908.04457v1)
+
+[Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610)
+
+[The Marginal Value of Adaptive Gradient Methods in Machine Learning](https://arxiv.org/abs/1705.08292)
 
 [Why Learning of Large-Scale Neural Networks Behaves Like Convex Optimization](https://arxiv.org/abs/1903.02140v1)
 
 [Optimization Methods for Large-Scale Machine Learning](https://arxiv.org/abs/1606.04838)
 
 
+_____
+
+
 ## How to run
 
-You can run the experiments and algorithms by calling ```python main.py``` with arguments as specified in the file. The algorithms can be run on two different datasets, MNIST and CIFAR-10. For MNIST a MLP is used, whereas a CNN is used for CIFAR-10. You may optionally decrease the size of the dataset to decrease computational complexity.
+You can run the experiments and algorithms by calling e.g.
+
+```python main.py -num_epochs 100 -dataset cifar -num_train 16384 ```
+
+with arguments as specified in the file. The algorithms can be run on two different datasets, MNIST and CIFAR-10. For MNIST a MLP is used, whereas a CNN is used for CIFAR-10. You may optionally decrease the size of the dataset to decrease computational complexity.
+
+_____
+
+
+## Results
+
+This is the interesting part. Coming soon!
