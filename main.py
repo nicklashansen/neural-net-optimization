@@ -12,8 +12,8 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-num_epochs', type=int, default=100)
 	parser.add_argument('-dataset', type=str, default='mnist')
-	parser.add_argument('-num_train', type=int, default=8192)
-	parser.add_argument('-num_val', type=int, default=1024)
+	parser.add_argument('-num_train', type=int, default=16384)
+	parser.add_argument('-num_val', type=int, default=2048)
 	parser.add_argument('-only_plot', type=bool, default=False)
 	args = parser.parse_args()
 
@@ -62,20 +62,23 @@ if __name__ == '__main__':
 			'rectified': True,
 			'weight_decay': 1e-4
 		},
+		'nadam': {
+			'lr': 1e-3,
+			'nesterov': True
+		},
 		'RMSProp': {
 			'lr': 1e-3,
 			'beta2': 0.999,
 		}
 	}
 
-	opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW']
+	opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW', 'nadam']
 	opt_losses, opt_val_losses, opt_labels = [], [], []
 
 	def do_stuff(opt):
 		print(f'\nTraining {opt} for {args.num_epochs} epochs...')
 		net = CNN() if args.dataset == 'cifar' else MLP()
-		opt_class = getattr(optimizers, 'SGD' if 'sgd' in opt else 'Adam')
-		optimizer = opt_class(
+		optimizer = misc.task_to_optimizer(opt)(
 			params=net.parameters(),
 			**optim_dict[opt]
 		)

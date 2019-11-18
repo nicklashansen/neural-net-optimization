@@ -10,6 +10,8 @@ import torchvision
 from torch.utils import data
 from torchvision import transforms
 
+import optimizers
+
 
 def load_cifar(num_train=8192, num_val=512):
 	"""
@@ -42,6 +44,18 @@ def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=256):
 	val_dataset = Dataset(x_valid, y_valid)
 
 	return train_dataset, val_dataset
+
+
+def task_to_optimizer(task:str) -> torch.optim.Optimizer:
+	"""
+	Takes a task as string and returns its respective optimizer class.
+	"""
+	if 'sgd' in task.lower():
+		return getattr(optimizers, 'SGD')
+	if 'adam' in task.lower():
+		return getattr(optimizers, 'Adam')
+	if 'rmsprop' in task.lower():
+		return getattr(optimizers, 'RMSProp')
 
 
 class AvgLoss():
@@ -137,11 +151,9 @@ def plot_loss(losses, val_losses, num_epochs):
 def plot_losses(losses, val_losses, labels, num_epochs, title, plot_val=False):
 	sns.set(style='darkgrid')
 	plt.figure(figsize=(12, 6))
-	colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
+	colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:cyan', 'tab:olive']
 
 	for i in range(len(losses)):
-		smoothed_losses = savgol_filter(losses[i].losses, 61, 3)
-		smoothed_losses_err = savgol_filter(losses[i].losses, 21, 3)
 		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smooth(losses[i].losses, 61), label=labels[i], alpha=1, c=colors[i])
 		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smooth(losses[i].losses, 21), alpha=0.25, c=colors[i])
 		if plot_val:
@@ -150,7 +162,8 @@ def plot_losses(losses, val_losses, labels, num_epochs, title, plot_val=False):
 	plt.tight_layout(pad=2)
 	plt.xlabel('Epoch')
 	plt.ylabel('Cross-entropy')
-	plt.title(title)
+	plt.yscale('log')
+	plt.title('CNN benchmark on CIFAR-10' if title == 'cifar' else 'MLP benchmark on MNIST')
 	plt.legend(loc='upper right')
 	plt.savefig(f'loss_{title}.png')
 	plt.clf()

@@ -72,23 +72,32 @@ class Adam(Optimizer):
                 group['v'] = []
                 group['t'] = 1
                 if nesterov:
-                    group['theta'] = []
+                    group['prev_grad'] = []
                 for param in group['params']:
                     group['m'].append(torch.zeros_like(param))
                     group['v'].append(torch.zeros_like(param))
                     if nesterov:
-                        group['theta'].append(param.data)
+                        group['prev_grad'].append(torch.zeros_like(param))
 
             for idx, param in enumerate(group['params']):
                 if l2_reg:
                     param.grad.data += l2_reg * param.data
+
+                if nesterov:
+                    grad = group['prev_grad'][idx]
+                else:
+                    grad = param.grad.data
+
                 m = group['m'][idx]
                 v = group['v'][idx]
                 t = group['t']
-                m = beta1 * m + (1 - beta1) * param.grad.data
-                v = beta2 * v + (1 - beta2) * param.grad.data**2
+                m = beta1 * m + (1 - beta1) * grad
+                v = beta2 * v + (1 - beta2) * grad**2
                 m_hat = m / (1 - beta1**t)
                 v_hat = v / (1 - beta2**t)
+
+                if nesterov:
+                    group['prev_grad'][idx] = param.grad.data
 
                 if rectified:
                     rho_inf = 2 / (1 - beta2) - 1
