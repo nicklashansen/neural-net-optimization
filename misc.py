@@ -148,21 +148,24 @@ def plot_loss(losses, val_losses, num_epochs):
 	plt.clf()
 
 
-def plot_losses(losses, val_losses, labels, num_epochs, title, plot_val=False):
+def plot_losses(losses, val_losses, labels, num_epochs, title, plot_val=False, yscale_log=False, max_epochs=None):
 	sns.set(style='darkgrid')
 	plt.figure(figsize=(12, 6))
 	colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:cyan', 'tab:olive']
 
 	for i in range(len(losses)):
-		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smooth(losses[i].losses, 61), label=labels[i], alpha=1, c=colors[i])
+		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smooth(losses[i].losses, 81), label=labels[i], alpha=1, c=colors[i])
 		plt.plot(np.linspace(0, num_epochs, num=len(losses[i])), smooth(losses[i].losses, 21), alpha=0.25, c=colors[i])
 		if plot_val:
-			plt.plot(np.linspace(0, num_epochs, num=len(val_losses[i])), smooth(val_losses[i].losses, 61), alpha=1, linestyle='--', c=colors[i])
+			plt.plot(np.linspace(0, num_epochs, num=len(val_losses[i])), smooth(val_losses[i].losses, 81), alpha=1, linestyle='--', c=colors[i])
 
 	plt.tight_layout(pad=2)
 	plt.xlabel('Epoch')
 	plt.ylabel('Cross-entropy')
-	plt.yscale('log')
+	if yscale_log:
+		plt.yscale('log')
+	if max_epochs is not None:
+		plt.xlim(0, max_epochs)
 	plt.title('CNN benchmark on CIFAR-10' if title == 'cifar' else 'MLP benchmark on MNIST')
 	plt.legend(loc='upper right')
 	plt.savefig(f'loss_{title}.png')

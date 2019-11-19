@@ -101,4 +101,13 @@ if __name__ == '__main__':
 
 	if not torch.cuda.is_available():
 		assert len(opt_losses) == len(opt_val_losses)
-		misc.plot_losses(opt_losses, opt_val_losses, labels=opt_labels, num_epochs=args.num_epochs, title=args.dataset, plot_val=False)
+		misc.plot_losses(
+			losses=opt_losses,
+			val_losses=opt_val_losses,
+			labels=opt_labels,
+			num_epochs=args.num_epochs,
+			title=args.dataset,
+			plot_val=False,
+			yscale_log=False,
+			max_epochs=40
+		)
