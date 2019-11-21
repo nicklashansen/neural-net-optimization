@@ -48,9 +48,9 @@ class SGD(Optimizer):
 
 
 class Adam(Optimizer):
-    def __init__(self, params, lr, beta1=0.9, beta2=0.999, nesterov=False, l2_reg=0, weight_decay=0, rectified=False):
+    def __init__(self, params, lr, beta1=0.9, beta2=0.999, nesterov=False, l2_reg=0, weight_decay=0, rectified=False, eps=1e-8):
         defaults = {'lr': lr, 'beta1': beta1, 'beta2': beta2, 'nesterov': nesterov, 'l2_reg': l2_reg,
-                    'weight_decay': weight_decay, 'rectified': rectified}
+                    'weight_decay': weight_decay, 'rectified': rectified, 'eps': eps}
         super(Adam, self).__init__(params, defaults)
 
     def step(self):
@@ -66,6 +66,7 @@ class Adam(Optimizer):
             l2_reg = group['l2_reg']
             weight_decay = group['weight_decay']
             rectified = group['rectified']
+            eps = group['eps']
 
             if 'm' not in group and 'v' not in group:
                 group['m'] = []
@@ -102,15 +103,15 @@ class Adam(Optimizer):
                 if rectified:
                     rho_inf = 2 / (1 - beta2) - 1
                     rho = rho_inf - 2 * t * beta2**t / (1 - beta2**t)
-                    if rho > 4:
-                        numerator = (rho - 4) * (rho - 2) * rho_inf
+                    if rho >= 5:
+                        numerator = (1 - beta2**t) * (rho - 4) * (rho - 2) * rho_inf
                         denominator = (rho_inf - 4) * (rho_inf - 2) * rho
                         r = np.sqrt(numerator / denominator)
-                        param.data += - lr * r * m_hat / (torch.sqrt(v_hat) + 1e-8)
+                        param.data += - lr * r * m_hat / (torch.sqrt(v) + eps)
                     else:
                         param.data += - lr * m_hat
                 else:
-                    param.data += - lr * m_hat / (torch.sqrt(v_hat) + 1e-8)
+                    param.data += - lr * m_hat / (torch.sqrt(v_hat) + eps)
 
                 if weight_decay:
                     param.data += - lr * weight_decay * param.data
