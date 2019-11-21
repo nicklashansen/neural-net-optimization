@@ -72,7 +72,8 @@ if __name__ == '__main__':
 		}
 	}
 
-	opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW', 'nadam']
+	opt_tasks = ['sgd']
+	#opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW', 'nadam']
 	opt_losses, opt_val_losses, opt_labels = [], [], []
 
 	def do_stuff(opt):
@@ -82,6 +83,8 @@ if __name__ == '__main__':
 			params=net.parameters(),
 			**optim_dict[opt]
 		)
+
+		optimizer = optimizers.Lookahead(optimizer, k=1000, alpha=1)
 
 		return fit(net, data, optimizer, num_epochs=args.num_epochs)
 

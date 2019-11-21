@@ -124,3 +124,32 @@ class Adam(Optimizer):
 class RMSProp(Adam):
     def __init__(self, params, lr, beta2):
         super(RMSProp, self).__init__(params, lr, beta2=beta2, beta1=0)
+
+
+class Lookahead(Optimizer):
+    def __init__(self, optimizer, k, alpha):
+        #super(Lookahead, self).__init__(optimizer, k, alpha)
+        self.optimizer = optimizer
+        self.k = k
+        self.alpha = alpha
+        self.param_groups = optimizer.param_groups
+
+        self.counter = 0
+        for group in optimizer.param_groups:
+            group['phi'] = []
+            for param in group['params']:
+                group['phi'].append(param.data)
+
+    def step(self):
+        if self.counter == self.k:
+            for group_idx, group in enumerate(self.optimizer.param_groups):
+                for idx, param in enumerate(group['phi']):
+                    theta = self.optimizer.param_groups[group_idx]['params'][idx].data
+                    group['phi'][idx] = group['phi'][idx] + self.alpha * (theta - group['phi'][idx])
+            self.counter = 0
+        else:
+            self.counter += 1
+            self.optimizer.step()
+
+
+
