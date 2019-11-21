@@ -1,6 +1,6 @@
 # Optimization for Deep Learning
 
-This repository will contain PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, Adam, Nadam, AdamW and RAdam. Work in progress!
+This repository contains a benchmark and PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, NSGD, SGDW, RMSProp, Adam, Nadam, AdamW, RAdam and RAdamW. Work in progress!
 
 _____
 
@@ -45,9 +45,9 @@ _____
 
 You can run the experiments and algorithms by calling e.g.
 
-```python main.py -num_epochs 100 -dataset cifar -num_train 16384 ```
+```python main.py -num_epochs 300 -dataset cifar -num_train 32768 ```
 
-with arguments as specified in the file. The algorithms can be run on two different datasets, MNIST and CIFAR-10. For MNIST a MLP is used, whereas a CNN is used for CIFAR-10. You may optionally decrease the size of the dataset to decrease computational complexity.
+with arguments as specified in the file. The algorithms can be run on two different datasets, MNIST and CIFAR-10. For MNIST a small MLP is used for proof of concept, whereas a CNN is used for CIFAR-10. You may optionally decrease the size of the dataset to decrease computational complexity.
 
 _____
 
