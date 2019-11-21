@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
 	optim_dict = {
 		'sgd': {
-			'lr': 1e-3
+			'lr': 1e-2
 		},
 		'sgd_momentum': {
 			'lr': 1e-3,
@@ -69,11 +69,13 @@ if __name__ == '__main__':
 		'RMSProp': {
 			'lr': 1e-3,
 			'beta2': 0.999,
+		},
+		'lookahead_sgd': {
+			'lr': 1e-2
 		}
 	}
 
-	opt_tasks = ['sgd']
-	#opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW', 'nadam']
+	opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW', 'nadam', 'lookahead_sgd']
 	opt_losses, opt_val_losses, opt_labels = [], [], []
 
 	def do_stuff(opt):
@@ -84,7 +86,8 @@ if __name__ == '__main__':
 			**optim_dict[opt]
 		)
 
-		optimizer = optimizers.Lookahead(optimizer, k=1000, alpha=1)
+		if 'lookahead' in opt.lower():
+			optimizer = optimizers.Lookahead(optimizer, k=5, alpha=0.5)
 
 		return fit(net, data, optimizer, num_epochs=args.num_epochs)
 
@@ -112,5 +115,5 @@ if __name__ == '__main__':
 			title=args.dataset,
 			plot_val=False,
 			yscale_log=False,
-			max_epochs=40
+			max_epochs=100
 		)
