@@ -15,6 +15,10 @@ Material in this repository has been developed as part of a special course / stu
 
 [Aggregated Momentum: Stability Through Passive Damping](https://arxiv.org/abs/1804.00325)
 
+[ADADELTA: An Adaptive Learning Rate Method](https://arxiv.org/abs/1212.5701)
+
+[RMSprop](http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf)
+
 [Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)
 
 [On the Convergence of Adam and Beyond](https://arxiv.org/abs/1904.09237)
