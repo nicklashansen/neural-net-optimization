@@ -32,7 +32,7 @@ class CNN(nn.Module):
 	"""
 	A small convolutional neural network with parameters that we can optimize for the task.
 	"""
-	def __init__(self, num_layers=3, num_filters=32, num_classes=10, input_size=(3, 32, 32)):
+	def __init__(self, num_layers=4, num_filters=64, num_classes=10, input_size=(3, 32, 32)):
 		super(CNN, self).__init__()
 
 		self.channels = input_size[0]
@@ -40,10 +40,11 @@ class CNN(nn.Module):
 		self.width = input_size[2]
 		self.num_filters = num_filters
 
-		self.conv_in = nn.Conv2d(self.channels, self.num_filters, kernel_size=3, padding=1)
+		self.conv_in = nn.Conv2d(self.channels, self.num_filters, kernel_size=5, padding=2)
 		cnn = []
 		for _ in range(num_layers):
 			cnn.append(nn.Conv2d(self.num_filters, self.num_filters, kernel_size=3, padding=1))
+			cnn.append(nn.BatchNorm2d(self.num_filters))
 			cnn.append(nn.ReLU())
 		self.cnn = nn.Sequential(*cnn)
 
@@ -64,7 +65,7 @@ class CNN(nn.Module):
 		return self.out_lin(x)
 
 
-def fit(net, data, optimizer, batch_size=128, num_epochs=250):
+def fit(net, data, optimizer, batch_size=128, num_epochs=250, lr_schedule=False):
 	"""
 	Fits parameters of a network `net` using `data` as training data and a given `optimizer`.
 	"""
@@ -73,6 +74,9 @@ def fit(net, data, optimizer, batch_size=128, num_epochs=250):
 
 	losses = misc.AvgLoss()
 	val_losses = misc.AvgLoss()
+
+	if lr_schedule:
+		scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5)
 
 	for epoch in range(num_epochs+1):
 
@@ -93,6 +97,9 @@ def fit(net, data, optimizer, batch_size=128, num_epochs=250):
 			optimizer.zero_grad()
 			loss.backward()
 			optimizer.step()
+
+		if lr_schedule:
+			scheduler.step(epoch_loss.avg)
 
 		if epoch % 2 == 0:
 			print(f'Epoch {epoch}/{num_epochs}, loss: {epoch_loss}, val loss: {epoch_val_loss}')

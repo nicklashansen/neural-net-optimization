@@ -1,5 +1,6 @@
 import os
 import pickle as pkl
+from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +12,80 @@ from torch.utils import data
 from torchvision import transforms
 
 import optimizers
+
+optim_dict = {
+		'sgd': {
+			'label': 'SGD',
+			'lr': 1e-2
+		},
+		'sgd_momentum': {
+			'label': 'SGD w/ momentum',
+			'lr': 1e-3,
+			'mu': 0.99
+		},
+		'sgd_nesterov': {
+			'label': 'SGD w/ Nesterov momentum',
+			'lr': 1e-3,
+			'mu': 0.99,
+			'nesterov': True
+		},
+		'sgd_weight_decay': {
+			'label': 'SGDW',
+			'lr': 1e-3,
+			'mu': 0.99,
+			'weight_decay': 1e-6
+		},
+		'adam': {
+			'label': 'Adam',
+			'lr': 1e-3
+		},
+		'adamW':{
+			'label': 'AdamW',
+			'lr': 1e-3,
+			'weight_decay': 1e-4
+		},
+		'adam_l2':{
+			'label': 'AdamL2',
+			'lr': 1e-3,
+			'l2_reg': 1e-4
+		},
+		'Radam': {
+			'label': 'RAdam',
+			'lr': 1e-3,
+			'rectified': True
+		},
+		'RadamW': {
+			'label': 'RAdamW',
+			'lr': 1e-3,
+			'rectified': True,
+			'weight_decay': 1e-4
+		},
+		'nadam': {
+			'label': 'Nadam',
+			'lr': 1e-3,
+			'nesterov': True
+		},
+		'RMSProp': {
+			'label': 'RMSprop',
+			'lr': 1e-3,
+			'beta2': 0.999,
+		},
+		'lookahead_adam': {
+			'label': 'Lookahead (Adam)',
+			'lr': 1e-3
+		}
+	}
+
+
+def split_optim_dict(d:dict) -> tuple:
+	"""
+	Splits an optimization dict into label and dict.
+	"""
+	temp_d = deepcopy(d)
+	label = temp_d['label']
+	del temp_d['label']
+
+	return label, temp_d
 
 
 def load_cifar(num_train=8192, num_val=512):
