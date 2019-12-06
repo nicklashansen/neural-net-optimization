@@ -11,9 +11,15 @@ Material in this repository has been developed as part of a special course / stu
 
 [An Overview of Gradient Descent Optimization Algorithms](https://arxiv.org/abs/1609.04747)
 
+[Optimization Methods for Large-Scale Machine Learning](https://arxiv.org/abs/1606.04838)
+
 [On the importance of initialization and momentum in deep learning](https://www.cs.toronto.edu/~fritz/absps/momentum.pdf)
 
 [Aggregated Momentum: Stability Through Passive Damping](https://arxiv.org/abs/1804.00325)
+
+[ADADELTA: An Adaptive Learning Rate Method](https://arxiv.org/abs/1212.5701)
+
+[RMSprop](http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf)
 
 [Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)
 
@@ -35,7 +41,7 @@ Material in this repository has been developed as part of a special course / stu
 
 [Why Learning of Large-Scale Neural Networks Behaves Like Convex Optimization](https://arxiv.org/abs/1903.02140v1)
 
-[Optimization Methods for Large-Scale Machine Learning](https://arxiv.org/abs/1606.04838)
+[Learning Rate Dropout](https://arxiv.org/abs/1912.00144)
 
 
 _____
