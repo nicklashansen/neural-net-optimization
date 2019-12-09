@@ -51,13 +51,23 @@ _____
 
 You can run the experiments and algorithms by calling e.g.
 
-```python main.py -num_epochs 100 -dataset cifar -num_train 50000 -num_val 10000 -lr_schedule True```
+```python main.py -num_epochs 30 -dataset cifar -num_train 50000 -num_val 2048 -lr_schedule True```
 
-with arguments as specified in the ```main.py``` file. The algorithms can be run on two different datasets, MNIST and CIFAR-10. For MNIST a small MLP is used for proof of concept, whereas a CNN is used for CIFAR-10. You may optionally decrease the size of the dataset and/or number of epochs to decrease computational complexity.
+with arguments as specified in the ```main.py``` file. The algorithms can be run on two different datasets, MNIST and CIFAR-10. For MNIST a small MLP is used for proof of concept, whereas a 808,458 parameter CNN is used for CIFAR-10. You may optionally decrease the size of the dataset and/or number of epochs to decrease computational complexity, but the arguments given above were used to produce the results shown here.
 
 _____
 
 
 ## Results
 
+Below you will find our main results. As for all optimization problems, the performance of particular algorithms is highly dependent on the problem details as well as hyper-parameters. While we have made no attempt at fine-tuning the hyper-parameters of individual optimization methods, we have kept as many hyper-parameters as possible constant to better allow for comparison. When faced with a real application, one should always try out a number of different algorithms and hyper-parameters to figure out what works better for your particular problem.
+
+![cifar_sgd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_sgd.png)
+
+![cifar_rmsprop_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_rmsprop_adam.png)
+
+![cifar_adam_weight_decay](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam_weight_decay.png)
+
 ![cifar_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam.png)
+
+![cifar_lookahead](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lookahead.png)
