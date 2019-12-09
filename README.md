@@ -60,4 +60,4 @@ _____
 
 ## Results
 
-This is the interesting part. Coming soon!
+![cifar_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam.png)
