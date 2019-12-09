@@ -1,6 +1,6 @@
 # Optimization for Deep Learning
 
-This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, AdamW, RAdam, RAdamW and Lookahead. Work in progress!
+This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW and Lookahead (with SGD and Adam as inner optimizers).
 
 _____
 
@@ -60,7 +60,9 @@ _____
 
 ## Results
 
-Below you will find our main results. As for all optimization problems, the performance of particular algorithms is highly dependent on the problem details as well as hyper-parameters. While we have made no attempt at fine-tuning the hyper-parameters of individual optimization methods, we have kept as many hyper-parameters as possible constant to better allow for comparison. When faced with a real application, one should always try out a number of different algorithms and hyper-parameters to figure out what works better for your particular problem.
+Below you will find our main results. As for all optimization problems, the performance of particular algorithms is highly dependent on the problem details as well as hyper-parameters. While we have made no attempt at fine-tuning the hyper-parameters of individual optimization methods, we have kept as many hyper-parameters as possible constant to better allow for comparison. Wherever possible, default hyper-parameters as proposed by original authors have been used.
+
+When faced with a real application, one should always try out a number of different algorithms and hyper-parameters to figure out what works better for your particular problem.
 
 ![cifar_sgd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_sgd.png)
 
