@@ -16,7 +16,7 @@ import optimizers
 optim_dict = {
 		'sgd': {
 			'label': 'SGD',
-			'lr': 1e-2
+			'lr': 1e-3
 		},
 		'sgd_momentum': {
 			'label': 'SGD w/ momentum',
@@ -65,10 +65,14 @@ optim_dict = {
 			'lr': 1e-3,
 			'nesterov': True
 		},
-		'RMSProp': {
+		'rmsprop': {
 			'label': 'RMSprop',
 			'lr': 1e-3,
-			'beta2': 0.999,
+			'beta2': 0.9,
+		},
+		'lookahead_sgd': {
+			'label': 'Lookahead (SGD)',
+			'lr': 1e-3
 		},
 		'lookahead_adam': {
 			'label': 'Lookahead (Adam)',
@@ -240,7 +244,8 @@ def plot_losses(losses, val_losses, labels, num_epochs, title, plot_val=False, y
 	if yscale_log:
 		plt.yscale('log')
 	if max_epochs is not None:
-		plt.xlim(0, max_epochs)
+		plt.xlim(-1, max_epochs)
+	plt.ylim(0, 2)
 	plt.title('CNN benchmark on CIFAR-10' if title == 'cifar' else 'MLP benchmark on MNIST')
 	plt.legend(loc='upper right')
 	plt.savefig(f'loss_{title}.png')

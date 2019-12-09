@@ -10,9 +10,9 @@ from networks import MLP, CNN, fit
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-num_epochs', type=int, default=50)
-	parser.add_argument('-dataset', type=str, default='mnist')
-	parser.add_argument('-num_train', type=int, default=4096)
+	parser.add_argument('-num_epochs', type=int, default=30)
+	parser.add_argument('-dataset', type=str, default='cifar')
+	parser.add_argument('-num_train', type=int, default=5000)
 	parser.add_argument('-num_val', type=int, default=2048)
 	parser.add_argument('-lr_schedule', type=bool, default=True)
 	parser.add_argument('-only_plot', type=bool, default=False)
@@ -25,7 +25,20 @@ if __name__ == '__main__':
 
 	print(f'Loaded data partitions: ({len(data[0])}), ({len(data[1])})')
 
-	opt_tasks = ['sgd', 'sgd_momentum', 'sgd_nesterov', 'sgd_weight_decay', 'adam', 'adamW', 'Radam', 'RadamW', 'nadam', 'lookahead_adam']
+	opt_tasks = [
+		'sgd',
+		'sgd_momentum',
+		'sgd_nesterov',
+		'sgd_weight_decay',
+		'rmsprop',
+		'adam',
+		'adam_l2',
+		'adamW',
+		'Radam',
+		'RadamW',
+		'nadam',
+		'lookahead_adam'
+	]
 	opt_losses, opt_val_losses, opt_labels = [], [], []
 
 	def do_stuff(opt):
@@ -66,5 +79,5 @@ if __name__ == '__main__':
 			title=args.dataset,
 			plot_val=False,
 			yscale_log=False,
-			max_epochs=50
+			max_epochs=30
 		)
