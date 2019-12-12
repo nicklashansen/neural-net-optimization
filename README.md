@@ -1,6 +1,6 @@
 # Optimization for Deep Learning
 
-This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW and Lookahead (with SGD and Adam as inner optimizers).
+This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW, Learning Rate Dropout and Lookahead (with SGD and Adam as inner optimizers).
 
 _____
 
