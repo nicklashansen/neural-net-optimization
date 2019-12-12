@@ -72,4 +72,6 @@ When faced with a real application, one should always try out a number of differ
 
 ![cifar_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam.png)
 
+![cifar_lrd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lrd.png)
+
 ![cifar_lookahead](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lookahead.png)
