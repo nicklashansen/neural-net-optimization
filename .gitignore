@@ -1,6 +1,9 @@
 .vscode/*
+.idea/*
 data/*
 losses/*
+losses_cifar/*
+losses_mnist/*
 *.xml
 *.pyc
 *.sh

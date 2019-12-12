@@ -12,7 +12,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-num_epochs', type=int, default=30)
 	parser.add_argument('-dataset', type=str, default='cifar')
-	parser.add_argument('-num_train', type=int, default=5000)
+	parser.add_argument('-num_train', type=int, default=50000)
 	parser.add_argument('-num_val', type=int, default=2048)
 	parser.add_argument('-lr_schedule', type=bool, default=True)
 	parser.add_argument('-only_plot', type=bool, default=False)
@@ -30,13 +30,17 @@ if __name__ == '__main__':
 		'sgd_momentum',
 		'sgd_nesterov',
 		'sgd_weight_decay',
+		'sgd_lrd',
 		'rmsprop',
 		'adam',
 		'adam_l2',
 		'adamW',
+		'adam_lrd',
 		'Radam',
 		'RadamW',
+		'Radam_lrd',
 		'nadam',
+		'lookahead_sgd',
 		'lookahead_adam'
 	]
 	opt_losses, opt_val_losses, opt_labels = [], [], []

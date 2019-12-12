@@ -35,6 +35,12 @@ optim_dict = {
 			'mu': 0.99,
 			'weight_decay': 1e-6
 		},
+		'sgd_lrd': {
+			'label': 'SGD w/ momentum + LRD',
+			'lr': 1e-3,
+			'mu': 0.99,
+			'lrd': 0.5
+		},
 		'adam': {
 			'label': 'Adam',
 			'lr': 1e-3
@@ -49,6 +55,11 @@ optim_dict = {
 			'lr': 1e-3,
 			'l2_reg': 1e-4
 		},
+		'adam_lrd': {
+			'label': 'Adam w/ LRD',
+			'lr': 1e-3,
+			'lrd': 0.5
+		},
 		'Radam': {
 			'label': 'RAdam',
 			'lr': 1e-3,
@@ -59,6 +70,12 @@ optim_dict = {
 			'lr': 1e-3,
 			'rectified': True,
 			'weight_decay': 1e-4
+		},
+		'Radam_lrd': {
+			'label': 'RAdam w/ LRD',
+			'lr': 1e-3,
+			'rectified': True,
+			'lrd': 0.5
 		},
 		'nadam': {
 			'label': 'Nadam',
@@ -72,7 +89,8 @@ optim_dict = {
 		},
 		'lookahead_sgd': {
 			'label': 'Lookahead (SGD)',
-			'lr': 1e-3
+			'lr': 1e-3,
+			'mu': 0.99
 		},
 		'lookahead_adam': {
 			'label': 'Lookahead (Adam)',

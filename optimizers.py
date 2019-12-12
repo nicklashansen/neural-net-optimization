@@ -1,11 +1,12 @@
 import torch
 import numpy as np
 from torch.optim import Optimizer
+from torch.distributions import Bernoulli
 
 
 class SGD(Optimizer):
-    def __init__(self, params, lr, mu=0, nesterov=False, weight_decay=0):
-        defaults = {'lr': lr, 'mu': mu, 'nesterov': nesterov, 'weight_decay': weight_decay}
+    def __init__(self, params, lr, mu=0, nesterov=False, weight_decay=0, lrd=1):
+        defaults = {'lr': lr, 'mu': mu, 'nesterov': nesterov, 'weight_decay': weight_decay, 'lrd': lrd}
         super(SGD, self).__init__(params, defaults)
 
     def step(self):
@@ -18,6 +19,7 @@ class SGD(Optimizer):
             mu = group['mu']
             nesterov = group['nesterov']
             weight_decay = group['weight_decay']
+            lrd_bernoulli = Bernoulli(probs=group['lrd'])
 
             if mu != 0 and 'v' not in group:
                 group['v'] = []
@@ -30,7 +32,8 @@ class SGD(Optimizer):
                         group['theta'].append(theta_param)
 
             for idx, param in enumerate(group['params']):
-                param.grad.data += weight_decay * param.data
+                param.grad.data -= weight_decay * param.data
+                lrd_mask = lrd_bernoulli.sample(param.size()).to(param.device)
 
                 if mu != 0:
                     v = group['v'][idx]
@@ -38,20 +41,20 @@ class SGD(Optimizer):
                     group['v'][idx] = v
 
                     if nesterov:
-                        group['theta'][idx] += v
+                        group['theta'][idx] += lrd_mask * v
                         param.data = group['theta'][idx] + mu * v
 
                     else:
-                        param.data += v        
+                        param.data += lrd_mask * v
 
                 else:
-                    param.data -= lr * param.grad.data
+                    param.data -= lrd_mask * lr * param.grad.data
 
 
 class Adam(Optimizer):
-    def __init__(self, params, lr, beta1=0.9, beta2=0.999, nesterov=False, l2_reg=0, weight_decay=0, rectified=False, eps=1e-8):
+    def __init__(self, params, lr, beta1=0.9, beta2=0.999, nesterov=False, l2_reg=0, weight_decay=0, rectified=False, lrd=1, eps=1e-8):
         defaults = {'lr': lr, 'beta1': beta1, 'beta2': beta2, 'nesterov': nesterov, 'l2_reg': l2_reg,
-                    'weight_decay': weight_decay, 'rectified': rectified, 'eps': eps}
+                    'weight_decay': weight_decay, 'rectified': rectified, 'lrd': lrd, 'eps': eps}
         super(Adam, self).__init__(params, defaults)
 
     def step(self):
@@ -67,6 +70,7 @@ class Adam(Optimizer):
             l2_reg = group['l2_reg']
             weight_decay = group['weight_decay']
             rectified = group['rectified']
+            lrd_bernoulli = Bernoulli(probs=group['lrd'])
             eps = group['eps']
 
             if 'm' not in group and 'v' not in group:
@@ -90,6 +94,8 @@ class Adam(Optimizer):
                 else:
                     grad = param.grad.data
 
+                lrd_mask = lrd_bernoulli.sample(param.size()).to(param.device)
+
                 m = group['m'][idx]
                 v = group['v'][idx]
                 t = group['t']
@@ -108,14 +114,14 @@ class Adam(Optimizer):
                         numerator = (1 - beta2**t) * (rho - 4) * (rho - 2) * rho_inf
                         denominator = (rho_inf - 4) * (rho_inf - 2) * rho
                         r = np.sqrt(numerator / denominator)
-                        param.data += - lr * r * m_hat / (torch.sqrt(v) + eps)
+                        param.data += - lrd_mask * lr * r * m_hat / (torch.sqrt(v) + eps)
                     else:
-                        param.data += - lr * m_hat
+                        param.data += - lrd_mask * lr * m_hat
                 else:
-                    param.data += - lr * m_hat / (torch.sqrt(v_hat) + eps)
+                    param.data += - lrd_mask * lr * m_hat / (torch.sqrt(v_hat) + eps)
 
                 if weight_decay:
-                    param.data += - lr * weight_decay * param.data
+                    param.data -= weight_decay * param.data
 
                 group['m'][idx] = m
                 group['v'][idx] = v
