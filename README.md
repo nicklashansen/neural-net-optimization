@@ -41,8 +41,11 @@ Material in this repository has been developed as part of a special course / stu
 
 [Why Learning of Large-Scale Neural Networks Behaves Like Convex Optimization](https://arxiv.org/abs/1903.02140v1)
 
-[Learning Rate Dropout](https://arxiv.org/abs/1912.00144)
+[Curriculum Learning in Deep Neural Networks](https://arxiv.org/abs/1904.12887)
 
+[HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic Gradient Descent](https://arxiv.org/abs/1106.5730)
+
+[Learning Rate Dropout](https://arxiv.org/abs/1912.00144)
 
 _____
 
