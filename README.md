@@ -1,6 +1,6 @@
 # Optimization for Deep Learning
 
-This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW and Lookahead (with SGD and Adam as inner optimizers).
+This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW, Gradient Noise, Learning Rate Dropout and Lookahead (with SGD and Adam as inner optimizers).
 
 _____
 
@@ -41,8 +41,13 @@ Material in this repository has been developed as part of a special course / stu
 
 [Why Learning of Large-Scale Neural Networks Behaves Like Convex Optimization](https://arxiv.org/abs/1903.02140v1)
 
-[Learning Rate Dropout](https://arxiv.org/abs/1912.00144)
+[Curriculum Learning in Deep Neural Networks](https://arxiv.org/abs/1904.12887)
 
+[HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic Gradient Descent](https://arxiv.org/abs/1106.5730)
+
+[Adding Gradient Noise Improves Learning for Very Deep Networks](https://arxiv.org/abs/1511.06807)
+
+[Learning Rate Dropout](https://arxiv.org/abs/1912.00144)
 
 _____
 
@@ -71,5 +76,7 @@ When faced with a real application, one should always try out a number of differ
 ![cifar_adam_weight_decay](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam_weight_decay.png)
 
 ![cifar_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam.png)
+
+![cifar_lrd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lrd.png)
 
 ![cifar_lookahead](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lookahead.png)
