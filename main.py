@@ -41,7 +41,9 @@ if __name__ == '__main__':
 		'Radam_lrd',
 		'nadam',
 		'lookahead_sgd',
-		'lookahead_adam'
+		'lookahead_adam',
+		'gradnoise_adam',
+		'graddropout_adam'
 	]
 	opt_losses, opt_val_losses, opt_labels = [], [], []
 
@@ -53,9 +55,7 @@ if __name__ == '__main__':
 			params=net.parameters(),
 			**kwargs
 		)
-
-		if 'lookahead' in opt.lower():
-			optimizer = optimizers.Lookahead(optimizer, k=5, alpha=0.5)
+		optimizer = misc.wrap_optimizer(opt, optimizer)
 
 		return fit(net, data, optimizer, num_epochs=args.num_epochs, lr_schedule=True)
 

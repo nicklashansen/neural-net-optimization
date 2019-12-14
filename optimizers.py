@@ -1,10 +1,14 @@
 import torch
 import numpy as np
 from torch.optim import Optimizer
-from torch.distributions import Bernoulli
+from torch.distributions import Bernoulli, Normal
 
 
 class SGD(Optimizer):
+    """
+    Stochastic gradient descent. Also includes implementations of momentum,
+    Nesterov's momentum, L2 regularization, SGDW and Learning Rate Dropout.
+    """
     def __init__(self, params, lr, mu=0, nesterov=False, weight_decay=0, lrd=1):
         defaults = {'lr': lr, 'mu': mu, 'nesterov': nesterov, 'weight_decay': weight_decay, 'lrd': lrd}
         super(SGD, self).__init__(params, defaults)
@@ -52,6 +56,11 @@ class SGD(Optimizer):
 
 
 class Adam(Optimizer):
+    """
+    Adam as proposed by https://arxiv.org/abs/1412.6980.
+    Also includes a number of proposed extensions to the the Adam algorithm,
+    such as Nadam, L2 regularization, AdamW, RAdam and Learning Rate Dropout.
+    """
     def __init__(self, params, lr, beta1=0.9, beta2=0.999, nesterov=False, l2_reg=0, weight_decay=0, rectified=False, lrd=1, eps=1e-8):
         defaults = {'lr': lr, 'beta1': beta1, 'beta2': beta2, 'nesterov': nesterov, 'l2_reg': l2_reg,
                     'weight_decay': weight_decay, 'rectified': rectified, 'lrd': lrd, 'eps': eps}
@@ -130,12 +139,20 @@ class Adam(Optimizer):
 
 
 class RMSProp(Adam):
+    """
+    RMSprop as proposed by http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf.
+    Note that this implementation, unlike the original RMSprop, uses bias-corrected moments.
+    """
     def __init__(self, params, lr, beta2):
         super(RMSProp, self).__init__(params, lr, beta2=beta2, beta1=0)
 
 
 class Lookahead(Optimizer):
-    def __init__(self, optimizer, k, alpha):
+    """
+    Lookahead Optimization as proposed by https://arxiv.org/abs/1907.08610.
+    This is a wrapper class that can be applied to an instantiated optimizer.
+    """
+    def __init__(self, optimizer, k=5, alpha=0.5):
         self.optimizer = optimizer
         self.k = k
         self.alpha = alpha
@@ -158,3 +175,47 @@ class Lookahead(Optimizer):
         else:
             self.counter += 1
             self.optimizer.step()
+
+
+class GradientNoise(Optimizer):
+    """
+    Gradient Noise as proposed by https://arxiv.org/abs/1511.06807.
+    This is a wrapper class that can be applied to an instantiated optimizer.
+    """
+    def __init__(self, optimizer, eta=0.3, gamma=0.55):
+        self.optimizer = optimizer
+        self.eta = eta
+        self.gamma = gamma
+        self.t = 0
+        self.param_groups = optimizer.param_groups
+
+    def step(self):
+        normal = torch.empty(1).normal_(mean=0, std=np.sqrt(self.eta/((1+self.t)**self.gamma)))\
+            .to(self.optimizer.param_groups[0]['params'][0].device)
+        for group_idx, group in enumerate(self.param_groups):
+            for idx, param in enumerate(group['params']):
+                self.optimizer.param_groups[group_idx]['params'][idx].grad.data += normal
+                self.optimizer.step()
+                self.t += 1
+
+
+class GradientDropout(Optimizer):
+    """
+    Gradient dropout as proposed by https://arxiv.org/abs/1912.00144.
+    This is a wrapper class that can be applied to an instantiated optimizer.
+    Note that this method does not improve optimization significantly and
+    is only here for comparison to Learning Rate Dropout.
+    """
+    def __init__(self, optimizer, grad_retain=0.5):
+        self.optimizer = optimizer
+        self.grad_retain = 0.5
+        self.grad_bernoulli = Bernoulli(probs=grad_retain)
+        self.param_groups = optimizer.param_groups
+
+    def step(self):
+        for group_idx, group in enumerate(self.param_groups):
+            for idx, param in enumerate(group['params']):
+                grad_mask = self.grad_bernoulli.sample(param.size()).to(param.device)
+                self.optimizer.param_groups[group_idx]['params'][idx].grad.data *= grad_mask
+                self.optimizer.step()
+                

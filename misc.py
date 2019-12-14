@@ -95,6 +95,14 @@ optim_dict = {
 		'lookahead_adam': {
 			'label': 'Lookahead (Adam)',
 			'lr': 1e-3
+		},
+		'gradnoise_adam': {
+			'label': 'Gradient Noise (Adam)',
+			'lr': 1e-3
+		},
+		'graddropout_adam': {
+			'label': 'Gradient Dropout (Adam)',
+			'lr': 1e-3
 		}
 	}
 
@@ -147,12 +155,35 @@ def task_to_optimizer(task:str) -> torch.optim.Optimizer:
 	"""
 	Takes a task as string and returns its respective optimizer class.
 	"""
+	optimizer = None
+
 	if 'sgd' in task.lower():
-		return getattr(optimizers, 'SGD')
+		optimizer = getattr(optimizers, 'SGD')
 	if 'adam' in task.lower():
-		return getattr(optimizers, 'Adam')
+		optimizer = getattr(optimizers, 'Adam')
 	if 'rmsprop' in task.lower():
-		return getattr(optimizers, 'RMSProp')
+		optimizer = getattr(optimizers, 'RMSProp')
+	
+	if optimizer is None:
+		raise ValueError(f'Optimizer for task \'{task}\' was not recognized!')
+
+	return optimizer
+
+
+def wrap_optimizer(task:str, optimizer):
+	"""
+	Wraps an instantiated optimizer according to its task specified as a string.
+	"""
+	if 'gradnoise' in task.lower():
+		optimizer = optimizers.GradientNoise(optimizer, eta=0.3, gamma=0.55)
+
+	if 'graddropout' in task.lower():
+		optimizer = optimizers.GradientDropout(optimizer, grad_retain=0.5)
+
+	if 'lookahead' in task.lower():
+		optimizer = optimizers.Lookahead(optimizer, k=5, alpha=0.5)
+
+	return optimizer
 
 
 class AvgLoss():
