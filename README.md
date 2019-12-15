@@ -69,14 +69,14 @@ Below you will find our main results. As for all optimization problems, the perf
 
 When faced with a real application, one should always try out a number of different algorithms and hyper-parameters to figure out what works better for your particular problem.
 
-![cifar_sgd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_sgd.png)
+![cifar_sgd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/results/loss_cifar_sgd.png)
 
-![cifar_rmsprop_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_rmsprop_adam.png)
+![cifar_rmsprop_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/results/loss_cifar_rmsprop_adam.png)
 
-![cifar_adam_weight_decay](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam_weight_decay.png)
+![cifar_adam_weight_decay](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/results/loss_cifar_adam_weight_decay.png)
 
-![cifar_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam.png)
+![cifar_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/results/loss_cifar_adam.png)
 
-![cifar_lrd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lrd.png)
+![cifar_lrd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/results/loss_cifar_lrd.png)
 
-![cifar_lookahead](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lookahead.png)
+![cifar_lookahead](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/results/loss_cifar_lookahead.png)
