@@ -1,6 +1,6 @@
 # Optimization for Deep Learning
 
-This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW, Gradient Noise, Learning Rate Dropout and Lookahead (with SGD and Adam as inner optimizers).
+This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW, Gradient Noise, Gradient Dropout, Learning Rate Dropout and Lookahead (with SGD and Adam as inner optimizers).
 
 _____
 
@@ -78,5 +78,7 @@ When faced with a real application, one should always try out a number of differ
 ![cifar_adam](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_adam.png)
 
 ![cifar_lrd](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lrd.png)
+
+![cifar_gradnoise](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_gradnoise.png)
 
 ![cifar_lookahead](https://raw.githubusercontent.com/nicklashansen/neural-net-optimization/master/loss_cifar_lookahead.png)
