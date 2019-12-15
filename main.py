@@ -15,7 +15,7 @@ if __name__ == '__main__':
 	parser.add_argument('-num_train', type=int, default=50000)
 	parser.add_argument('-num_val', type=int, default=2048)
 	parser.add_argument('-lr_schedule', type=bool, default=True)
-	parser.add_argument('-only_plot', type=bool, default=False)
+	parser.add_argument('-only_plot', type=bool, default=True)
 	args = parser.parse_args()
 
 	data = getattr(misc, 'load_'+args.dataset)(
@@ -24,7 +24,7 @@ if __name__ == '__main__':
 	)
 
 	print(f'Loaded data partitions: ({len(data[0])}), ({len(data[1])})')
-
+	
 	opt_tasks = [
 		'sgd',
 		'sgd_momentum',

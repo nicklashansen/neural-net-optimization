@@ -206,9 +206,9 @@ class GradientDropout(Optimizer):
     Note that this method does not improve optimization significantly and
     is only here for comparison to Learning Rate Dropout.
     """
-    def __init__(self, optimizer, grad_retain=0.5):
+    def __init__(self, optimizer, grad_retain=0.9):
         self.optimizer = optimizer
-        self.grad_retain = 0.5
+        self.grad_retain = grad_retain
         self.grad_bernoulli = Bernoulli(probs=grad_retain)
         self.param_groups = optimizer.param_groups
 
@@ -218,4 +218,4 @@ class GradientDropout(Optimizer):
                 grad_mask = self.grad_bernoulli.sample(param.size()).to(param.device)
                 self.optimizer.param_groups[group_idx]['params'][idx].grad.data *= grad_mask
                 self.optimizer.step()
-                
+    

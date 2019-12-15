@@ -118,7 +118,7 @@ def split_optim_dict(d:dict) -> tuple:
 	return label, temp_d
 
 
-def load_cifar(num_train=8192, num_val=512):
+def load_cifar(num_train=50000, num_val=2048):
 	"""
 	Loads a subset of the CIFAR dataset and returns it as a tuple.
 	"""
@@ -133,7 +133,7 @@ def load_cifar(num_train=8192, num_val=512):
 	return train_dataset, val_dataset
 
 
-def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=256):
+def load_mnist(filename='data/mnist.npz', num_train=4096, num_val=512):
 	"""
 	Loads a subset of the grayscale MNIST dataset and returns it as a tuple.
 	"""
@@ -178,7 +178,7 @@ def wrap_optimizer(task:str, optimizer):
 		optimizer = optimizers.GradientNoise(optimizer, eta=0.3, gamma=0.55)
 
 	if 'graddropout' in task.lower():
-		optimizer = optimizers.GradientDropout(optimizer, grad_retain=0.5)
+		optimizer = optimizers.GradientDropout(optimizer, grad_retain=0.9)
 
 	if 'lookahead' in task.lower():
 		optimizer = optimizers.Lookahead(optimizer, k=5, alpha=0.5)
@@ -294,7 +294,7 @@ def plot_losses(losses, val_losses, labels, num_epochs, title, plot_val=False, y
 		plt.yscale('log')
 	if max_epochs is not None:
 		plt.xlim(-1, max_epochs)
-	plt.ylim(0, 2)
+	plt.ylim(0, 3)
 	plt.title('CNN benchmark on CIFAR-10' if title == 'cifar' else 'MLP benchmark on MNIST')
 	plt.legend(loc='upper right')
 	plt.savefig(f'loss_{title}.png')
