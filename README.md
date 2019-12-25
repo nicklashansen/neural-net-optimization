@@ -7,7 +7,7 @@ _____
 
 ## Related papers
 
-Material in this repository has been developed as part of a special course / study. This is the tentative list of papers that we discuss:
+Material in this repository has been developed as part of a special course / study. This is the list of papers that we have discussed and/or implemented:
 
 [An Overview of Gradient Descent Optimization Algorithms](https://arxiv.org/abs/1609.04747)
 
