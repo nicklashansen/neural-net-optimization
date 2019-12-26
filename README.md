@@ -1,13 +1,15 @@
 # Optimization for Deep Learning
 
-This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW, Gradient Noise, Gradient Dropout, Learning Rate Dropout and Lookahead (with SGD and Adam as inner optimizers).
+This repository contains PyTorch implementations of popular/recent optimization algorithms for deep learning, including SGD, SGD w/ momentum, SGD w/ Nesterov momentum, SGDW, RMSprop, Adam, Nadam, Adam w/ L2 regularization, AdamW, RAdam, RAdamW, Gradient Noise, Gradient Dropout, Learning Rate Dropout and Lookahead.
+
+All extensions have been implemented such that it allows for mix-and-match optimization, e.g. you can train a neural net using RAdamW with both Nesterov momemntum, Gradient Noise, Learning Rate Dropout and Lookahead.
 
 _____
 
 
 ## Related papers
 
-Material in this repository has been developed as part of a special course / study. This is the list of papers that we have discussed and/or implemented:
+Material in this repository has been developed as part of a special course / study and reading group. This is the list of papers that we have discussed and/or implemented:
 
 [An Overview of Gradient Descent Optimization Algorithms](https://arxiv.org/abs/1609.04747)
 
@@ -50,6 +52,8 @@ Material in this repository has been developed as part of a special course / stu
 [Adding Gradient Noise Improves Learning for Very Deep Networks](https://arxiv.org/abs/1511.06807)
 
 [Learning Rate Dropout](https://arxiv.org/abs/1912.00144)
+
+[Towards Explaining the Regularization Effect of Initial Large Learning Rate in Training Neural Networks](https://arxiv.org/abs/1907.04595)
 
 _____
 
